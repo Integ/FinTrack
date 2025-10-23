@@ -1,0 +1,63 @@
+# macOS 系统文件
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# macOS 目录
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# IDE 和编辑器文件
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# 依赖目录
+node_modules/
+vendor/
+bower_components/
+
+# 编译输出
+dist/
+build/
+out/
+*.log
+*.tmp
+*.temp
+
+# 环境配置文件
+.env
+.env.local
+.env.*.local
+.env.development
+.env.test
+.env.production
+
+# 其他
+*.bak
+*.cache
+*.pid
+*.seed
+*.pid.lock
+.npm
+.eslintcache
+.yarn-integrity 
