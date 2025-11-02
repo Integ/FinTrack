@@ -37,7 +37,7 @@ const Footer: React.FC = () => {
                         align="center"
                         sx={{ color: '#FFD700' }}
                     >
-                        FinTrack - 您的个人财务管理助手
+                        FinTrack - 财务追踪助手
                     </Typography>
                     <Typography
                         variant="body1"

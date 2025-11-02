@@ -19,13 +19,15 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
 
     const handleExport = () => {
         // 将交易数据转换为CSV格式
-        const headers = ['日期', '类型', '金额', '类别', '描述'];
+        const headers = ['日期', '类型', '金额', '成本', '类别', '描述'];
         const csvContent = [
             headers.join(','),
             ...transactions.map(t => [
                 t.date,
                 t.type,
                 t.amount,
+                // 对于收入类型，导出成本字段；对于支出类型，导出空字符串或0
+                t.type === 'income' ? (t.cost !== undefined ? t.cost : '') : '',
                 t.category,
                 `"${t.description.replace(/"/g, '""')}"`  // 处理描述中的引号
             ].join(','))
@@ -51,24 +53,72 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
             // 处理不同操作系统的换行符
             const lines = text.replace(/\r\n/g, '\n').split('\n');
 
+            // 解析表头，判断CSV格式版本
+            const headerLine = lines[0];
+            // 使用相同的CSV解析逻辑处理表头
+            const parseCSVLine = (line: string): string[] => {
+                const values: string[] = [];
+                let current = '';
+                let inQuotes = false;
+                
+                for (let i = 0; i < line.length; i++) {
+                    const char = line[i];
+                    if (char === '"') {
+                        if (inQuotes && line[i + 1] === '"') {
+                            current += '"';
+                            i++;
+                        } else {
+                            inQuotes = !inQuotes;
+                        }
+                    } else if (char === ',' && !inQuotes) {
+                        values.push(current);
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+                values.push(current);
+                return values;
+            };
+            
+            const headers = parseCSVLine(headerLine);
+            const hasCostColumn = headers.includes('成本') || headers.length > 5;
+            const costIndex = headers.includes('成本') ? headers.indexOf('成本') : 3; // 默认成本在索引3位置
+            
             // 跳过表头，处理每一行数据
             lines.slice(1).forEach(line => {
                 if (!line.trim()) return; // 跳过空行
                 
-                const values = line.split(',');
-                const transaction: Omit<Transaction, 'id'> = {
-                    date: values[0],
-                    type: values[1] as 'income' | 'expense',
-                    amount: parseFloat(values[2]),
-                    category: values[3],
-                    description: values[4].replace(/^"|"$/g, '').replace(/""/g, '"'), // 处理引号
+                // 使用相同的CSV解析逻辑处理数据行
+                const values = parseCSVLine(line);
+                
+                // 兼容旧格式（没有成本列）和新格式（有成本列）
+                const dateIndex = 0;
+                const typeIndex = 1;
+                const amountIndex = 2;
+                const categoryIndex = hasCostColumn ? 4 : 3;
+                const descriptionIndex = hasCostColumn ? 5 : 4;
+                
+                const transactionType = values[typeIndex] as 'income' | 'expense';
+                const transaction: Transaction = {
+                    id: crypto.randomUUID(),
+                    date: values[dateIndex],
+                    type: transactionType,
+                    amount: parseFloat(values[amountIndex]) || 0,
+                    category: values[categoryIndex] || '',
+                    description: values[descriptionIndex]?.replace(/^"|"$/g, '').replace(/""/g, '"') || '',
                 };
 
+                // 如果是收入类型且有成本列，设置成本字段
+                if (transactionType === 'income' && hasCostColumn && values[costIndex] !== undefined && values[costIndex].trim() !== '') {
+                    const costValue = parseFloat(values[costIndex]);
+                    if (!isNaN(costValue)) {
+                        transaction.cost = costValue;
+                    }
+                }
+
                 // 添加到 store
-                dispatch(addTransaction({
-                    ...transaction,
-                    id: crypto.randomUUID(), // 生成新的 ID
-                }));
+                dispatch(addTransaction(transaction));
             });
         };
         reader.readAsText(file);
@@ -98,12 +148,8 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
                             objectFit: 'contain'
                         }}
                     />
-                    {/* Full title on sm and up, shorter title on xs (mobile) */}
-                    <Typography variant="h6" component="div" sx={{ display: { xs: 'none', sm: 'block' } }}>
-                        FinTrack - 您的个人财务管理助手
-                    </Typography>
-                    <Typography variant="h6" component="div" sx={{ display: { xs: 'block', sm: 'none' } }}>
-                        FinTrack - 财务管理助手
+                    <Typography variant="h6" component="div">
+                        FinTrack - 财务追踪助手
                     </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>

@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import TransactionList from '../components/TransactionList';
 import TransactionForm from '../components/TransactionForm';
 import TransactionSummary from '../components/TransactionSummary';
+import DailyChart from '../components/DailyChart';
 
 const Dashboard: React.FC = () => {
     const [isFormOpen, setIsFormOpen] = useState(false);
@@ -16,6 +17,7 @@ const Dashboard: React.FC = () => {
             <Container maxWidth="md" sx={{ mt: 4, mb: 8, flex: 1 }}>
                 <TransactionSummary />
                 <TransactionList />
+                <DailyChart />
                 <Fab
                     color="primary"
                     aria-label="add"
