@@ -8,8 +8,6 @@ import { Transaction } from '../types/transaction';
 interface DailyData {
     date: string;
     income: number;
-    expense: number;
-    cost: number;
 }
 
 const DailyChart: React.FC = () => {
@@ -18,17 +16,25 @@ const DailyChart: React.FC = () => {
     );
 
     const chartData = useMemo(() => {
-        // 生成最近7天的日期数组
+        const formatLocalDate = (d: Date): string => {
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+
+        // 生成最近30天的日期数组（含今天）
         const dates: string[] = [];
         const today = new Date();
         
-        for (let i = 6; i >= 0; i--) {
+        for (let i = 29; i >= 0; i--) {
             const date = new Date(today);
             date.setDate(date.getDate() - i);
-            dates.push(date.toISOString().split('T')[0]); // YYYY-MM-DD格式
+            // 使用本地时间格式化 YYYY-MM-DD，避免UTC导致的跨天偏移
+            dates.push(formatLocalDate(date));
         }
 
-        // 按日期统计收支
+        // 按日期统计收入
         const dailyMap = new Map<string, DailyData>();
         
         // 初始化所有日期为0
@@ -36,33 +42,28 @@ const DailyChart: React.FC = () => {
             dailyMap.set(date, {
                 date: date,
                 income: 0,
-                expense: 0,
-                cost: 0,
             });
         });
 
-        // 统计每笔交易的收支和成本
+        // 统计每笔交易的收入
         transactions.forEach((transaction: Transaction) => {
             const transactionDate = transaction.date;
             if (dailyMap.has(transactionDate)) {
                 const dayData = dailyMap.get(transactionDate)!;
                 if (transaction.type === 'income') {
                     dayData.income += transaction.amount;
-                    // 统计收入交易的成本
-                    if ((transaction as any).cost !== undefined) {
-                        dayData.cost += (transaction as any).cost || 0;
-                    }
-                } else {
-                    dayData.expense += transaction.amount;
-                    // 支出也是成本的一部分
-                    dayData.cost += transaction.amount;
                 }
             }
         });
 
-        // 转换为数组并格式化日期显示
+        // 转换为数组并格式化日期显示（以本地时间解析）
         const data = Array.from(dailyMap.values()).map(item => {
-            const dateObj = new Date(item.date);
+            const [yearStr, monthStr, dayStr] = item.date.split('-');
+            const dateObj = new Date(
+                Number(yearStr),
+                Number(monthStr) - 1,
+                Number(dayStr)
+            );
             const month = dateObj.getMonth() + 1;
             const day = dateObj.getDate();
             return {
@@ -74,9 +75,12 @@ const DailyChart: React.FC = () => {
         return data;
     }, [transactions]);
 
-    // 自定义Tooltip
-    const CustomTooltip = ({ active, payload }: any) => {
+    // 自定义Tooltip（加入日期显示）
+    const CustomTooltip = ({ active, payload, label }: any) => {
         if (active && payload && payload.length) {
+            const p0 = payload[0];
+            const dateLabel: string | undefined = p0?.payload?.dateLabel ?? label;
+            const fullDate: string | undefined = p0?.payload?.date;
             return (
                 <Paper
                     sx={{
@@ -85,6 +89,11 @@ const DailyChart: React.FC = () => {
                         border: '1px solid rgba(255, 215, 0, 0.3)',
                     }}
                 >
+                    {dateLabel && (
+                        <Typography sx={{ color: '#FFD700', fontSize: '0.875rem', mb: 0.75 }}>
+                            日期: {dateLabel}
+                        </Typography>
+                    )}
                     {payload.map((entry: any, index: number) => (
                         <Typography
                             key={index}
@@ -113,7 +122,7 @@ const DailyChart: React.FC = () => {
             }}
         >
             <Typography variant="h6" gutterBottom sx={{ color: '#FFD700', mb: 2 }}>
-                最近7天收支与成本统计
+                最近30天收入统计
             </Typography>
             <Box sx={{ width: '100%', height: 300 }}>
                 <ResponsiveContainer width="100%" height="100%">
@@ -137,26 +146,11 @@ const DailyChart: React.FC = () => {
                             style={{ fontSize: '0.75rem' }}
                         />
                         <Tooltip content={<CustomTooltip />} />
-                        <Legend
-                            wrapperStyle={{ color: '#FFD700' }}
-                            iconType="rect"
-                        />
+                        <Legend wrapperStyle={{ color: '#FFD700' }} iconType="rect" />
                         <Bar
                             dataKey="income"
                             name="收入"
                             fill="#4caf50"
-                            radius={[4, 4, 0, 0]}
-                        />
-                        <Bar
-                            dataKey="expense"
-                            name="支出"
-                            fill="#f44336"
-                            radius={[4, 4, 0, 0]}
-                        />
-                        <Bar
-                            dataKey="cost"
-                            name="成本"
-                            fill="#ff9800"
                             radius={[4, 4, 0, 0]}
                         />
                     </BarChart>

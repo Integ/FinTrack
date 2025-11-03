@@ -33,11 +33,9 @@ const TransactionSummary: React.FC = () => {
                 }
             } else {
                 acc.totalExpense += transaction.amount;
-                // expense transactions are also part of overall costs
-                acc.costs += transaction.amount;
             }
             // profit = total income - total costs
-            acc.profit = acc.totalIncome - acc.costs;
+            acc.profit = acc.totalIncome - acc.costs - acc.totalExpense;
             return acc;
         },
         {
@@ -80,8 +78,12 @@ const TransactionSummary: React.FC = () => {
         <Box sx={{ mb: 3 }}>
             {/* First row: 总收入/总支出 */}
             <Box sx={{ display: 'flex', flexWrap: 'wrap', mb: 2 }}>
-                <SummaryItem title="总收入" value={summary.totalIncome} color="success.main" />
-                <SummaryItem title="总支出" value={summary.totalExpense} color="error.main" />
+                <SummaryItem title="收入" value={summary.totalIncome} color="success.main" />
+                <SummaryItem
+                    title="利润"
+                    value={summary.profit}
+                    color={summary.profit >= 0 ? 'success.main' : 'error.main'}
+                />
             </Box>
             {/* Second row: 成本/利润 */}
             <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
@@ -90,11 +92,7 @@ const TransactionSummary: React.FC = () => {
                     value={summary.costs}
                     color="warning.main"
                 />
-                <SummaryItem
-                    title="利润"
-                    value={summary.profit}
-                    color={summary.profit >= 0 ? 'success.main' : 'error.main'}
-                />
+                <SummaryItem title="支出" value={summary.totalExpense} color="error.main" />
             </Box>
         </Box>
     );
