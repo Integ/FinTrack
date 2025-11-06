@@ -122,7 +122,7 @@ const DailyChart: React.FC = () => {
             }}
         >
             <Typography variant="h6" gutterBottom sx={{ color: '#FFD700', mb: 2 }}>
-                最近30天收入统计
+                最近30天收入趋势统计
             </Typography>
             <Box sx={{ width: '100%', height: 300 }}>
                 <ResponsiveContainer width="100%" height="100%">
@@ -145,13 +145,13 @@ const DailyChart: React.FC = () => {
                             stroke="#FFD700"
                             style={{ fontSize: '0.75rem' }}
                         />
-                        <Tooltip content={<CustomTooltip />} />
-                        <Legend wrapperStyle={{ color: '#FFD700' }} iconType="rect" />
+                        <Tooltip cursor={false} content={<CustomTooltip />} />
                         <Bar
                             dataKey="income"
                             name="收入"
                             fill="#4caf50"
                             radius={[4, 4, 0, 0]}
+                            activeBar={{ fill: '#FFD700' }}
                         />
                     </BarChart>
                 </ResponsiveContainer>
