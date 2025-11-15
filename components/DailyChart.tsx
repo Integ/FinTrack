@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Paper, Typography, Box } from '@mui/material';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { Transaction } from '../types/transaction';
@@ -8,6 +8,9 @@ import { Transaction } from '../types/transaction';
 interface DailyData {
     date: string;
     income: number;
+    expense: number;
+    cost: number;
+    totalExpense: number; // 支出和成本的总和
 }
 
 const DailyChart: React.FC = () => {
@@ -42,21 +45,31 @@ const DailyChart: React.FC = () => {
             dailyMap.set(date, {
                 date: date,
                 income: 0,
+                expense: 0,
+                cost: 0,
+                totalExpense: 0,
             });
         });
 
-        // 统计每笔交易的收入
+        // 统计每笔交易的收入、支出和成本
         transactions.forEach((transaction: Transaction) => {
             const transactionDate = transaction.date;
             if (dailyMap.has(transactionDate)) {
                 const dayData = dailyMap.get(transactionDate)!;
                 if (transaction.type === 'income') {
                     dayData.income += transaction.amount;
+                    // 如果有成本，累加成本
+                    if (transaction.cost !== undefined) {
+                        dayData.cost += transaction.cost;
+                    }
+                } else if (transaction.type === 'expense') {
+                    dayData.expense += transaction.amount;
                 }
             }
         });
 
         // 转换为数组并格式化日期显示（以本地时间解析）
+        // 将支出和成本合并，并转换为负值，使柱状图向下展示
         const data = Array.from(dailyMap.values()).map(item => {
             const [yearStr, monthStr, dayStr] = item.date.split('-');
             const dateObj = new Date(
@@ -66,12 +79,19 @@ const DailyChart: React.FC = () => {
             );
             const month = dateObj.getMonth() + 1;
             const day = dateObj.getDate();
+            // 合并支出和成本
+            const totalExpense = item.expense + item.cost;
             return {
                 ...item,
+                // 保留原始正值用于 tooltip 显示
+                expense: item.expense,
+                cost: item.cost,
+                // 合并后的总值，转换为负值，向下展示
+                totalExpense: -totalExpense,
                 dateLabel: `${month}/${day}`, // 显示为 MM/DD 格式
             };
         });
-
+console.log(data);
         return data;
     }, [transactions]);
 
@@ -94,18 +114,62 @@ const DailyChart: React.FC = () => {
                             日期: {dateLabel}
                         </Typography>
                     )}
-                    {payload.map((entry: any, index: number) => (
-                        <Typography
-                            key={index}
-                            sx={{
-                                color: entry.color,
-                                fontSize: '0.875rem',
-                                mb: 0.5,
-                            }}
-                        >
-                            {entry.name}: ${entry.value.toFixed(2)}
-                        </Typography>
-                    ))}
+                    {payload.map((entry: any, index: number) => {
+                        // 如果是支出和成本合并的柱状图，显示详细信息
+                        if (entry.dataKey === 'totalExpense') {
+                            const expense = entry.payload?.expense || 0;
+                            const cost = entry.payload?.cost || 0;
+                            return (
+                                <Box key={index}>
+                                    <Typography
+                                        sx={{
+                                            color: entry.color,
+                                            fontSize: '0.875rem',
+                                            mb: 0.5,
+                                        }}
+                                    >
+                                        {entry.name}: ${Math.abs(entry.value).toFixed(2)}
+                                    </Typography>
+                                    {expense > 0 && (
+                                        <Typography
+                                            sx={{
+                                                color: '#f44336',
+                                                fontSize: '0.75rem',
+                                                ml: 1.5,
+                                                mb: 0.25,
+                                            }}
+                                        >
+                                            支出: ${expense.toFixed(2)}
+                                        </Typography>
+                                    )}
+                                    {cost > 0 && (
+                                        <Typography
+                                            sx={{
+                                                color: '#e91e63',
+                                                fontSize: '0.75rem',
+                                                ml: 1.5,
+                                                mb: 0.25,
+                                            }}
+                                        >
+                                            成本: ${cost.toFixed(2)}
+                                        </Typography>
+                                    )}
+                                </Box>
+                            );
+                        }
+                        return (
+                            <Typography
+                                key={index}
+                                sx={{
+                                    color: entry.color,
+                                    fontSize: '0.875rem',
+                                    mb: 0.5,
+                                }}
+                            >
+                                {entry.name}: ${Math.abs(entry.value).toFixed(2)}
+                            </Typography>
+                        );
+                    })}
                 </Paper>
             );
         }
@@ -122,18 +186,19 @@ const DailyChart: React.FC = () => {
             }}
         >
             <Typography variant="h6" gutterBottom sx={{ color: '#FFD700', mb: 2 }}>
-                最近30天收入趋势统计
+                最近30天收支趋势统计
             </Typography>
             <Box sx={{ width: '100%', height: 300 }}>
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                         data={chartData}
                         margin={{
-                            top: 20,
+                            top: 10,
                             right: 30,
-                            left: 20,
+                            left: 0,
                             bottom: 5,
                         }}
+                        barGap={0}
                     >
                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" />
                         <XAxis
@@ -145,13 +210,30 @@ const DailyChart: React.FC = () => {
                             stroke="#FFD700"
                             style={{ fontSize: '0.75rem' }}
                         />
+                        <ReferenceLine 
+                            y={0} 
+                            stroke="#FFD700" 
+                            strokeWidth={1}
+                            strokeDasharray="0"
+                        />
                         <Tooltip cursor={false} content={<CustomTooltip />} />
+                        <Legend 
+                            wrapperStyle={{ color: '#FFD700' }}
+                            iconType="rect"
+                        />
                         <Bar
                             dataKey="income"
                             name="收入"
                             fill="#4caf50"
                             radius={[4, 4, 0, 0]}
-                            activeBar={{ fill: '#FFD700' }}
+                            activeBar={{ fill: '#388E3C' }}
+                        />
+                        <Bar
+                            dataKey="totalExpense"
+                            name="支出+成本"
+                            fill="#f44336"
+                            radius={[4, 4, 0, 0]}
+                            activeBar={{ fill: '#ff6b6b' }}
                         />
                     </BarChart>
                 </ResponsiveContainer>
