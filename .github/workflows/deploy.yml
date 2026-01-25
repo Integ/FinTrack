@@ -28,8 +28,11 @@ jobs:
         node-version: '18'
         cache: 'npm'
 
-    - name: Install dependencies
-      run: npm ci
+    - name: Clean install dependencies
+      run: |
+        npm cache clean --force
+        rm -rf node_modules package-lock.json
+        npm install --prefer-offline --no-audit
 
     - name: Build project
       run: npm run build
@@ -43,6 +46,9 @@ jobs:
         else
           echo "ℹ️  No CNAME file found, using default GitHub Pages domain"
         fi
+        
+    - name: Create .nojekyll file
+      run: touch build/.nojekyll
         
     - name: Setup Pages
       uses: actions/configure-pages@v4
