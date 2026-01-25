@@ -13,8 +13,6 @@ import {
     Box,
     Typography,
     Grid,
-    Tabs,
-    Tab,
 } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { addTransaction, updateTransaction } from '../store/transactionSlice';

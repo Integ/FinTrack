@@ -1,19 +1,14 @@
 import React, { useRef, useState } from 'react';
-import { AppBar, Toolbar, Typography, IconButton, Box, Button, Menu, MenuItem, Tooltip } from '@mui/material';
-import { Menu as MenuIcon, FileUpload as FileUploadIcon, FileDownload as FileDownloadIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
+import { AppBar, Toolbar, Typography, IconButton, Box, Tooltip } from '@mui/material';
+import { FileUpload as FileUploadIcon, FileDownload as FileDownloadIcon } from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store';
 import { Transaction } from '../types/transaction';
 import { addTransaction } from '../store/transactionSlice';
-import logo from '../assets/logo.png';
 
-interface HeaderProps {
-    onMenuClick: () => void;
-}
 
-const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
+const Header: React.FC = () => {
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const dispatch = useDispatch();
     const transactions = useSelector((state: RootState) => state.transactions.transactions);
 
