@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Fab, Box, useMediaQuery, useTheme } from '@mui/material';
+import { Container, Fab, Box } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
 import Header from '../components/Header';
 import TransactionList from '../components/TransactionList';
@@ -8,8 +8,6 @@ import TransactionSummary from '../components/TransactionSummary';
 import DailyChart from '../components/DailyChart';
 
 const Dashboard: React.FC = () => {
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
     const [isFormOpen, setIsFormOpen] = useState(false);
 
     return (

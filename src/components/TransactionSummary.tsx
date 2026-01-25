@@ -3,7 +3,7 @@ import { Box, Paper, Typography, Grid } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { Transaction } from '../types/transaction';
-import { TrendingUp as TrendingUpIcon, TrendingDown as TrendingDownIcon, Assessment as DollarSignIcon, TrackChanges as TargetIcon } from '@mui/icons-material';
+import { TrendingUp as TrendingUpIcon, TrendingDown as TrendingDownIcon, TrackChanges as TargetIcon } from '@mui/icons-material';
 
 interface Summary {
     totalIncome: number;
@@ -11,12 +11,6 @@ interface Summary {
     revenue: number;
     costs: number;
     profit: number;
-}
-
-interface SummaryItemProps {
-    title: string;
-    value: number;
-    color?: string;
 }
 
 const TransactionSummary: React.FC = () => {
