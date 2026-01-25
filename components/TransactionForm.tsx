@@ -10,6 +10,11 @@ import {
     MenuItem,
     FormControl,
     InputLabel,
+    Box,
+    Typography,
+    Grid,
+    Tabs,
+    Tab,
 } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { addTransaction, updateTransaction } from '../store/transactionSlice';
@@ -25,21 +30,21 @@ interface TransactionFormProps {
 const TransactionForm: React.FC<TransactionFormProps> = ({ open, onClose, editingTransaction }) => {
     const dispatch = useDispatch();
     // Keep amount as string in the form state so we can represent an empty field.
-        const [transaction, setTransaction] = useState<{
-            date: string;
-            type: 'income' | 'expense';
-            amount: string;
-            cost: string;
-            category: string;
-            description: string;
-        }>({
-        date: editingTransaction?.date || new Date().toLocaleDateString('sv-SE'), // 'sv-SE' locale gives YYYY-MM-DD format
+    const [transaction, setTransaction] = useState<{
+        date: string;
+        type: 'income' | 'expense';
+        amount: string;
+        cost: string;
+        category: string;
+        description: string;
+    }>({
+        date: editingTransaction?.date || new Date().toLocaleDateString('sv-SE'),
         type: editingTransaction?.type || 'expense',
-        amount: editingTransaction?.amount !== undefined ? String(editingTransaction.amount) : '0',
-        cost: (editingTransaction as any)?.cost !== undefined ? String((editingTransaction as any).cost) : '0',
-            category: editingTransaction?.category || '',
-            description: editingTransaction?.description || '',
-        });
+        amount: editingTransaction?.amount !== undefined ? String(editingTransaction.amount) : '',
+        cost: (editingTransaction as any)?.cost !== undefined ? String((editingTransaction as any).cost) : '',
+        category: editingTransaction?.category || '',
+        description: editingTransaction?.description || '',
+    });
 
     React.useEffect(() => {
         if (editingTransaction) {
@@ -79,105 +84,161 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ open, onClose, editin
     };
 
     return (
-        <Dialog open={open} onClose={onClose}>
-            <DialogTitle>{editingTransaction ? '编辑交易' : '新增交易'}</DialogTitle>
-            <DialogContent>
-                <TextField
-                    margin="dense"
-                    label="日期"
-                    type="date"
-                    fullWidth
-                    value={transaction.date}
-                    onChange={(e) =>
-                        setTransaction({ ...transaction, date: e.target.value })
-                    }
-                    InputLabelProps={{ shrink: true }}
-                />
-                <FormControl fullWidth margin="dense">
-                    <InputLabel id="transaction-type-label">类型</InputLabel>
-                    <Select
-                        labelId="transaction-type-label"
-                        label="类型"
-                        value={transaction.type}
-                        onChange={(e) =>
-                            setTransaction({
-                                ...transaction,
-                                type: e.target.value as 'income' | 'expense',
-                            })
-                        }
-                    >
-                        <MenuItem value="income">收入</MenuItem>
-                        <MenuItem value="expense">支出</MenuItem>
-                    </Select>
-                </FormControl>
-                <TextField
-                    margin="dense"
-                    label="金额"
-                    type="number"
-                    fullWidth
-                    value={transaction.amount}
-                    onChange={(e) =>
-                        setTransaction({
-                            ...transaction,
-                            amount: e.target.value,
-                        })
-                    }
-                    onFocus={() => {
-                        // If current value is exactly '0', clear it so user can type without deleting
-                        if (transaction.amount === '0') {
-                            setTransaction({ ...transaction, amount: '' });
-                        }
-                    }}
-                />
-                    {/* Show cost input only for income type */}
-                    {transaction.type === 'income' && (
+        <Dialog 
+            open={open} 
+            onClose={onClose}
+            maxWidth="sm"
+            fullWidth
+            PaperProps={{
+                sx: { borderRadius: 3 }
+            }}
+        >
+            <DialogTitle sx={{ pb: 1 }}>
+                <Typography variant="h4" component="div" sx={{ fontWeight: 600 }}>
+                    {editingTransaction ? '编辑交易' : '新增交易'}
+                </Typography>
+            </DialogTitle>
+            
+            <DialogContent sx={{ pt: 1 }}>
+                <Grid container spacing={3}>
+                    <Grid item xs={12}>
                         <TextField
-                            margin="dense"
-                            label="成本"
+                            label="日期"
+                            type="date"
+                            fullWidth
+                            value={transaction.date}
+                            onChange={(e) =>
+                                setTransaction({ ...transaction, date: e.target.value })
+                            }
+                            InputLabelProps={{ shrink: true }}
+                            variant="outlined"
+                        />
+                    </Grid>
+                    
+                    <Grid item xs={12}>
+                        <FormControl fullWidth variant="outlined">
+                            <InputLabel>交易类型</InputLabel>
+                            <Select
+                                label="交易类型"
+                                value={transaction.type}
+                                onChange={(e) =>
+                                    setTransaction({
+                                        ...transaction,
+                                        type: e.target.value as 'income' | 'expense',
+                                    })
+                                }
+                            >
+                                <MenuItem value="income">
+                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <Typography color="success.main" sx={{ mr: 1 }}>+</Typography>
+                                        收入
+                                    </Box>
+                                </MenuItem>
+                                <MenuItem value="expense">
+                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <Typography color="error.main" sx={{ mr: 1 }}>-</Typography>
+                                        支出
+                                    </Box>
+                                </MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    
+                    <Grid item xs={12} md={transaction.type === 'income' ? 6 : 12}>
+                        <TextField
+                            label="金额"
                             type="number"
                             fullWidth
-                            value={transaction.cost}
+                            value={transaction.amount}
                             onChange={(e) =>
                                 setTransaction({
                                     ...transaction,
-                                    cost: e.target.value,
+                                    amount: e.target.value,
                                 })
                             }
-                            onFocus={() => {
-                                if (transaction.cost === '0') {
-                                    setTransaction({ ...transaction, cost: '' });
-                                }
+                            variant="outlined"
+                            InputProps={{
+                                startAdornment: (
+                                    <Typography sx={{ mr: 1, color: 'text.secondary' }}>$</Typography>
+                                ),
                             }}
                         />
+                    </Grid>
+                    
+                    {transaction.type === 'income' && (
+                        <Grid item xs={12} md={6}>
+                            <TextField
+                                label="成本"
+                                type="number"
+                                fullWidth
+                                value={transaction.cost}
+                                onChange={(e) =>
+                                    setTransaction({
+                                        ...transaction,
+                                        cost: e.target.value,
+                                    })
+                                }
+                                variant="outlined"
+                                helperText="可选：记录与收入相关的成本"
+                                InputProps={{
+                                    startAdornment: (
+                                        <Typography sx={{ mr: 1, color: 'text.secondary' }}>$</Typography>
+                                    ),
+                                }}
+                            />
+                        </Grid>
                     )}
-                <TextField
-                    margin="dense"
-                    label="类别"
-                    fullWidth
-                    value={transaction.category}
-                    onChange={(e) =>
-                        setTransaction({ ...transaction, category: e.target.value })
-                    }
-                />
-                <TextField
-                    margin="dense"
-                    label="描述"
-                    fullWidth
-                    multiline
-                    rows={4}
-                    value={transaction.description}
-                    onChange={(e) =>
-                        setTransaction({
-                            ...transaction,
-                            description: e.target.value,
-                        })
-                    }
-                />
+                    
+                    <Grid item xs={12}>
+                        <TextField
+                            label="类别"
+                            fullWidth
+                            value={transaction.category}
+                            onChange={(e) =>
+                                setTransaction({ ...transaction, category: e.target.value })
+                            }
+                            variant="outlined"
+                            placeholder="例如：工资、餐饮、交通等"
+                        />
+                    </Grid>
+                    
+                    <Grid item xs={12}>
+                        <TextField
+                            label="描述"
+                            fullWidth
+                            multiline
+                            rows={3}
+                            value={transaction.description}
+                            onChange={(e) =>
+                                setTransaction({
+                                    ...transaction,
+                                    description: e.target.value,
+                                })
+                            }
+                            variant="outlined"
+                            placeholder="添加详细描述..."
+                        />
+                    </Grid>
+                </Grid>
             </DialogContent>
-            <DialogActions>
-                <Button onClick={onClose}>取消</Button>
-                <Button onClick={handleSubmit} variant="contained" color="primary">
-                    保存
+            
+            <DialogActions sx={{ p: 3, pt: 0 }}>
+                <Button 
+                    onClick={onClose}
+                    size="large"
+                    sx={{ borderRadius: 2 }}
+                >
+                    取消
+                </Button>
+                <Button 
+                    onClick={handleSubmit}
+                    variant="contained" 
+                    color="primary"
+                    size="large"
+                    sx={{ borderRadius: 2, px: 3 }}
+                    disabled={!transaction.amount || !transaction.category}
+                >
+                    {editingTransaction ? '更新' : '保存'}
                 </Button>
             </DialogActions>
         </Dialog>

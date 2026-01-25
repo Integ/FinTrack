@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Fab, Box } from '@mui/material';
+import { Container, Fab, Box, useMediaQuery, useTheme } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
 import Header from '../components/Header';
 import TransactionList from '../components/TransactionList';
@@ -8,32 +8,46 @@ import TransactionSummary from '../components/TransactionSummary';
 import DailyChart from '../components/DailyChart';
 
 const Dashboard: React.FC = () => {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
     const [isFormOpen, setIsFormOpen] = useState(false);
-    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-            <Header onMenuClick={() => setIsDrawerOpen(!isDrawerOpen)} />
-            <Container maxWidth="md" sx={{ mt: 4, mb: 8, flex: 1 }}>
+            <Header />
+            <Container 
+                maxWidth="lg" 
+                sx={{ 
+                    mt: { xs: 2, sm: 4 }, 
+                    mb: { xs: 6, sm: 8 }, 
+                    flex: 1,
+                    px: { xs: 2, sm: 3 }
+                }}
+            >
                 <TransactionSummary />
-                <TransactionList />
-                <DailyChart />
+                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: 3 }}>
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                        <TransactionList />
+                    </Box>
+                    <Box sx={{ width: { lg: '400px' }, flexShrink: 0 }}>
+                        <DailyChart />
+                    </Box>
+                </Box>
+                
                 <Fab
                     color="primary"
                     aria-label="add"
                     sx={{ 
                         position: 'fixed', 
-                        bottom: 16, 
-                        right: 16,
-                        bgcolor: '#FFD700',
-                        '&:hover': {
-                            bgcolor: '#DAA520',
-                        }
+                        bottom: { xs: 16, sm: 24 }, 
+                        right: { xs: 16, sm: 24 },
+                        zIndex: 1000,
                     }}
                     onClick={() => setIsFormOpen(true)}
                 >
                     <AddIcon />
                 </Fab>
+                
                 <TransactionForm
                     open={isFormOpen}
                     onClose={() => setIsFormOpen(false)}

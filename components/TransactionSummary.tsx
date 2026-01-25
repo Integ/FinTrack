@@ -1,8 +1,9 @@
 import React from 'react';
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, Paper, Typography, Grid } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { Transaction } from '../types/transaction';
+import { TrendingUp as TrendingUpIcon, TrendingDown as TrendingDownIcon, DollarSign as DollarSignIcon, Target as TargetIcon } from '@mui/icons-material';
 
 interface Summary {
     totalIncome: number;
@@ -47,53 +48,109 @@ const TransactionSummary: React.FC = () => {
         }
     );
 
-    const SummaryItem: React.FC<SummaryItemProps> = ({ title, value, color = 'inherit' }) => (
-        <Box sx={{ flex: 1, minWidth: 200, m: 1 }}>
-            <Paper
-                sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    background: 'linear-gradient(145deg, #1E1E1E 0%, #2A2A2A 100%)',
-                    borderTop: '1px solid rgba(255, 215, 0, 0.1)',
-                    '&:hover': {
-                        boxShadow: '0 4px 12px rgba(255, 215, 0, 0.2)',
-                        transition: 'all 0.3s ease-in-out',
-                    },
-                }}
-            >
-                <Typography variant="h6" gutterBottom>
+    const SummaryCard: React.FC<{ 
+        title: string; 
+        value: number; 
+        color: string; 
+        icon: React.ReactNode;
+        trend?: number;
+    }> = ({ title, value, color, icon, trend }) => (
+        <Paper
+            sx={{
+                p: 3,
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                position: 'relative',
+                overflow: 'hidden',
+                transition: 'all 0.2s ease-in-out',
+                '&:hover': {
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 8px 16px rgba(0, 0, 0, 0.1)',
+                },
+            }}
+        >
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Box sx={{ 
+                    p: 1, 
+                    borderRadius: 1, 
+                    backgroundColor: `${color}15`,
+                    color: color,
+                    mr: 2
+                }}>
+                    {icon}
+                </Box>
+                <Typography variant="body2" color="text.secondary">
                     {title}
                 </Typography>
-                <Typography
-                    variant="h4"
-                    color={color}
-                >{`$${value.toFixed(2)}`}</Typography>
-            </Paper>
-        </Box>
+            </Box>
+            
+            <Typography 
+                variant="h4" 
+                sx={{ 
+                    fontWeight: 600,
+                    color: color,
+                    mb: trend !== undefined ? 1 : 0
+                }}
+            >
+                ${value.toFixed(2)}
+            </Typography>
+            
+            {trend !== undefined && (
+                <Box sx={{ display: 'flex', alignItems: 'center', mt: 'auto' }}>
+                    {trend > 0 ? (
+                        <TrendingUpIcon sx={{ fontSize: 16, color: 'success.main', mr: 0.5 }} />
+                    ) : (
+                        <TrendingDownIcon sx={{ fontSize: 16, color: 'error.main', mr: 0.5 }} />
+                    )}
+                    <Typography variant="caption" color="text.secondary">
+                        {Math.abs(trend).toFixed(1)}%
+                    </Typography>
+                </Box>
+            )}
+        </Paper>
     );
 
     return (
-        <Box sx={{ mb: 3 }}>
-            {/* First row: 总收入/总支出 */}
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', mb: 2 }}>
-                <SummaryItem title="收入" value={summary.totalIncome} color="success.main" />
-                <SummaryItem
-                    title="利润"
-                    value={summary.profit}
-                    color={summary.profit >= 0 ? 'success.main' : 'error.main'}
-                />
-            </Box>
-            {/* Second row: 成本/利润 */}
-            <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                <SummaryItem
-                    title="成本"
-                    value={summary.costs}
-                    color="warning.main"
-                />
-                <SummaryItem title="支出" value={summary.totalExpense} color="error.main" />
-            </Box>
+        <Box sx={{ mb: 4 }}>
+            <Typography variant="h4" sx={{ mb: 3, fontWeight: 600 }}>
+                财务概览
+            </Typography>
+            
+            <Grid container spacing={2}>
+                <Grid item xs={12} sm={6} md={3}>
+                    <SummaryCard
+                        title="总收入"
+                        value={summary.totalIncome}
+                        color="success.main"
+                        icon={<TrendingUpIcon />}
+                    />
+                </Grid>
+                <Grid item xs={12} sm={6} md={3}>
+                    <SummaryCard
+                        title="净利润"
+                        value={summary.profit}
+                        color={summary.profit >= 0 ? 'success.main' : 'error.main'}
+                        icon={summary.profit >= 0 ? <TrendingUpIcon /> : <TrendingDownIcon />}
+                    />
+                </Grid>
+                <Grid item xs={12} sm={6} md={3}>
+                    <SummaryCard
+                        title="总成本"
+                        value={summary.costs}
+                        color="warning.main"
+                        icon={<TargetIcon />}
+                    />
+                </Grid>
+                <Grid item xs={12} sm={6} md={3}>
+                    <SummaryCard
+                        title="总支出"
+                        value={summary.totalExpense}
+                        color="error.main"
+                        icon={<TrendingDownIcon />}
+                    />
+                </Grid>
+            </Grid>
         </Box>
     );
 };

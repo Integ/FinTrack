@@ -9,35 +9,90 @@ const theme = createTheme({
     palette: {
         mode: 'dark',
         primary: {
-            main: '#FFD700', // 金色
-            dark: '#DAA520', // 深金色
-            light: '#FFE55C', // 浅金色
-            contrastText: '#000000', // 文字颜色设为黑色以确保在金色背景上可读
+            main: '#2563EB', // 专业蓝色
+            dark: '#1D4ED8',
+            light: '#3B82F6',
+            contrastText: '#FFFFFF',
+        },
+        secondary: {
+            main: '#10B981', // 成功绿色
+            dark: '#059669',
+            light: '#34D399',
+        },
+        error: {
+            main: '#EF4444', // 错误红色
+            dark: '#DC2626',
+        },
+        warning: {
+            main: '#F59E0B', // 警告橙色
+            dark: '#D97706',
         },
         background: {
-            default: '#121212', // 深色背景
-            paper: '#1E1E1E', // 稍浅一点的黑色，用于卡片
+            default: '#0F172A', // 深蓝灰背景
+            paper: '#1E293B', // 卡片背景
         },
         text: {
-            primary: '#FFFFFF',
-            secondary: 'rgba(255, 255, 255, 0.7)',
+            primary: '#F1F5F9',
+            secondary: '#94A3B8',
+        },
+        divider: 'rgba(148, 163, 184, 0.1)',
+    },
+    typography: {
+        fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        h4: {
+            fontWeight: 600,
+            fontSize: '1.5rem',
+        },
+        h6: {
+            fontWeight: 500,
+            fontSize: '1rem',
+        },
+        body1: {
+            fontSize: '0.875rem',
+            lineHeight: 1.5,
         },
     },
     components: {
         MuiPaper: {
             styleOverrides: {
                 root: {
-                    borderRadius: 8,
-                    boxShadow: '0 2px 8px rgba(255, 215, 0, 0.15)', // 金色阴影
-                    backgroundColor: '#1E1E1E', // 确保所有Paper组件使用稍浅的黑色
+                    borderRadius: 12,
+                    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)',
+                    backgroundColor: '#1E293B',
+                    border: '1px solid rgba(148, 163, 184, 0.1)',
                 },
             },
         },
         MuiAppBar: {
             styleOverrides: {
                 root: {
-                    background: 'linear-gradient(45deg, #FFD700 30%, #DAA520 90%)',
-                    color: '#000000',
+                    background: '#1E293B',
+                    color: '#F1F5F9',
+                    borderBottom: '1px solid rgba(148, 163, 184, 0.1)',
+                    boxShadow: 'none',
+                },
+            },
+        },
+        MuiButton: {
+            styleOverrides: {
+                root: {
+                    textTransform: 'none',
+                    borderRadius: 8,
+                    fontWeight: 500,
+                },
+                containedPrimary: {
+                    background: '#2563EB',
+                    '&:hover': {
+                        background: '#1D4ED8',
+                    },
+                },
+            },
+        },
+        MuiFab: {
+            styleOverrides: {
+                root: {
+                    borderRadius: 12,
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
                 },
             },
         },

@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
-import { AppBar, Toolbar, Typography, IconButton, Box, Button, Menu, MenuItem } from '@mui/material';
-import { Menu as MenuIcon, FileUpload as FileUploadIcon, FileDownload as FileDownloadIcon } from '@mui/icons-material';
+import { AppBar, Toolbar, Typography, IconButton, Box, Button, Menu, MenuItem, Tooltip } from '@mui/material';
+import { Menu as MenuIcon, FileUpload as FileUploadIcon, FileDownload as FileDownloadIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store';
 import { Transaction } from '../types/transaction';
@@ -130,78 +130,57 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
     };
 
     return (
-        <AppBar 
-            position="static" 
-            sx={{ 
-                background: 'linear-gradient(45deg, #FFD700 30%, #DAA520 90%)',
-                boxShadow: '0 3px 5px 2px rgba(218, 165, 32, .3)'
-            }}>
-            <Toolbar>
+        <AppBar position="static" sx={{ height: 64 }}>
+            <Toolbar sx={{ height: 64, minHeight: 'auto !important' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
-                    <Box
-                        component="img"
-                        src={logo}
-                        alt="FinTrack Logo"
-                        sx={{
-                            height: 40,
-                            mr: 2,
-                            objectFit: 'contain'
+                    <Typography 
+                        variant="h6" 
+                        component="div" 
+                        sx={{ 
+                            fontWeight: 600,
+                            fontSize: '1.125rem',
+                            letterSpacing: '-0.025em'
                         }}
-                    />
-                    <Typography variant="h6" component="div">
-                        FinTrack - 财务追踪助手
+                    >
+                        FinTrack
                     </Typography>
                 </Box>
-                <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                    {/* Desktop / larger screens: show buttons */}
-                    <Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 1 }}>
-                        <Button
-                            color="inherit"
-                            startIcon={<FileUploadIcon />}
-                            onClick={() => fileInputRef.current?.click()}
-                        >
-                            导入
-                        </Button>
-                        <Button
-                            color="inherit"
-                            startIcon={<FileDownloadIcon />}
-                            onClick={handleExport}
-                        >
-                            导出
-                        </Button>
-                    </Box>
-
-                    {/* Mobile: menu icon that opens a menu with import/export */}
-                    <Box sx={{ display: { xs: 'flex', sm: 'none' } }}>
+                
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Tooltip title="导入数据">
                         <IconButton
-                            color="inherit"
-                            aria-label="open import export menu"
-                            onClick={(e) => setAnchorEl(e.currentTarget)}
+                            size="small"
+                            onClick={() => fileInputRef.current?.click()}
+                            sx={{ 
+                                color: 'text.secondary',
+                                '&:hover': { color: 'primary.main' }
+                            }}
                         >
-                            <MenuIcon />
+                            <FileUploadIcon fontSize="small" />
                         </IconButton>
-                        <Menu
-                            anchorEl={anchorEl}
-                            open={Boolean(anchorEl)}
-                            onClose={() => setAnchorEl(null)}
+                    </Tooltip>
+                    
+                    <Tooltip title="导出数据">
+                        <IconButton
+                            size="small"
+                            onClick={handleExport}
+                            sx={{ 
+                                color: 'text.secondary',
+                                '&:hover': { color: 'primary.main' }
+                            }}
                         >
-                            <MenuItem onClick={() => { setAnchorEl(null); fileInputRef.current?.click(); }}>
-                                <FileUploadIcon sx={{ mr: 1 }} /> 导入
-                            </MenuItem>
-                            <MenuItem onClick={() => { setAnchorEl(null); handleExport(); }}>
-                                <FileDownloadIcon sx={{ mr: 1 }} /> 导出
-                            </MenuItem>
-                        </Menu>
-                    </Box>
-
-                    <input
-                        type="file"
-                        ref={fileInputRef}
-                        accept=".csv"
-                        style={{ display: 'none' }}
-                        onChange={handleImport}
-                    />
+                            <FileDownloadIcon fontSize="small" />
+                        </IconButton>
+                    </Tooltip>
                 </Box>
+
+                <input
+                    type="file"
+                    ref={fileInputRef}
+                    accept=".csv"
+                    style={{ display: 'none' }}
+                    onChange={handleImport}
+                />
             </Toolbar>
         </AppBar>
     );
