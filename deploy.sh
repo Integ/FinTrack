@@ -45,7 +45,7 @@ if [ $? -eq 0 ]; then
     
     # 部署到 GitHub Pages
     echo "📤 部署到 GitHub Pages..."
-    npm run deploy
+    npx gh-pages -d build --dotfiles=true
     
     if [ $? -eq 0 ]; then
         echo "🎉 部署成功！"
