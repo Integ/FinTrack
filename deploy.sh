@@ -38,9 +38,10 @@ if [ $? -eq 0 ]; then
         echo "ℹ️  使用默认 GitHub Pages 域名"
         echo "💡 要使用自定义域名，请创建 CNAME 文件"
     fi
-
-if [ $? -eq 0 ]; then
-    echo "✅ 构建成功！"
+    
+    # 确保构建文件正确
+    touch build/.nojekyll
+    echo "✅ 创建 .nojekyll 文件"
     
     # 部署到 GitHub Pages
     echo "📤 部署到 GitHub Pages..."
@@ -66,6 +67,14 @@ if [ $? -eq 0 ]; then
         echo "   2. 选择 Source 为 'GitHub Actions'"
         echo "   3. 首次部署可能需要几分钟时间"
         echo "   4. 自定义域名可能需要 DNS 传播时间"
+        echo ""
+        echo "🔍 测试访问："
+        if [ -f "CNAME" ]; then
+            echo "   主页: https://$DOMAIN"
+            echo "   测试页: https://$DOMAIN/deploy-test.html"
+        else
+            echo "   主页: https://[您的用户名].github.io/FinTrack"
+        fi
     else
         echo "❌ 部署失败！"
         exit 1
