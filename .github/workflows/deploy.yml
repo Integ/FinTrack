@@ -3,8 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -40,12 +39,11 @@ jobs:
         if [ -f "CNAME" ]; then
           echo "✅ CNAME file found, copying to build directory"
           cp CNAME build/CNAME
+          echo "Domain: $(cat CNAME)"
         else
           echo "ℹ️  No CNAME file found, using default GitHub Pages domain"
-          echo "💡 To use custom domain, create a CNAME file in the root directory"
-          echo "   with your domain name (e.g., www.yourdomain.com)"
         fi
-
+        
     - name: Setup Pages
       uses: actions/configure-pages@v4
 
