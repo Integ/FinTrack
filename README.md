@@ -1,7 +1,7 @@
 # FinTrack - 专业副业财务管理工具
 
 <div align="center">
-  <img src="assets/logo.png" alt="FinTrack Logo" width="200"/>
+  <img src="logo.svg" alt="FinTrack Logo" width="200"/>
   
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
   [![React](https://img.shields.io/badge/React-18.2.0-blue.svg)](https://reactjs.org/)
@@ -31,7 +31,7 @@
 
 ```bash
 # 克隆项目
-git clone https://github.com/[您的用户名]/FinTrack.git
+git clone https://github.com/integ/FinTrack.git
 cd FinTrack
 
 # 安装依赖
@@ -60,45 +60,10 @@ npm start
 
 3. **查看部署**
    - 在 Actions 标签页查看部署进度
-   - 完成后访问：`https://[您的用户名].github.io/FinTrack`
-
-### 手动部署
-
-```bash
-# 使用部署脚本
-./deploy.sh
-
-# 或手动部署
-npm run deploy
-```
-
-### 🌐 自定义域名配置
-
-如果您想使用自定义域名：
-
-1. **在 GitHub Pages 中设置**
-   - Settings > Pages > Custom domain
-   - 输入您的域名（如：fintrack.yourdomain.com）
-
-2. **配置 DNS 记录**
-   - 根据域名提供商添加 CNAME 或 A 记录
-   - 详细指南请查看：[CUSTOM_DOMAIN.md](./CUSTOM_DOMAIN.md)
-
-3. **通过代码管理域名**
-```bash
-# 方法一：手动创建 CNAME 文件
-echo "yourdomain.com" > CNAME
-git add CNAME
-git commit -m "配置自定义域名"
-git push origin main
-
-# 方法二：使用配置脚本（推荐）
-./setup-domain.sh fintrack.yourdomain.com
-```
 
 ## 📱 在线演示
 
-🔗 **体验地址**：`https://[您的用户名].github.io/FinTrack`
+🔗 **体验地址**：`https://fintrack.integ.cf`
 
 ## 🛠️ 技术栈
 
@@ -135,9 +100,6 @@ FinTrack/
 npm start          # 启动开发服务器
 npm run build      # 构建生产版本
 npm test           # 运行测试
-npm run deploy     # 部署到GitHub Pages
-./deploy.sh        # 使用部署脚本（推荐）
-./setup-domain.sh # 配置自定义域名
 ```
 
 ## 📊 核心功能

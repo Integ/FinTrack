@@ -50,11 +50,11 @@ const TransactionList: React.FC = () => {
         return (
             <Box
                 sx={{
-                    p: 2,
+                    p: { xs: 1.5, sm: 2 },
                     border: '1px solid',
                     borderColor: 'divider',
                     borderRadius: 2,
-                    mb: 2,
+                    mb: 1.5,
                     transition: 'all 0.2s ease-in-out',
                     '&:hover': {
                         borderColor: 'primary.main',
@@ -62,59 +62,62 @@ const TransactionList: React.FC = () => {
                     },
                 }}
             >
-                <Grid container spacing={2} alignItems="center">
+                <Grid container spacing={1.5} alignItems="center">
                     <Grid item>
                         <Box
                             sx={{
-                                p: 1,
+                                p: 0.75,
                                 borderRadius: 1,
                                 backgroundColor: isIncome ? 'success.main' : 'error.main',
                                 color: 'background.paper',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
                             }}
                         >
-                            {isIncome ? <TrendingUpIcon /> : <TrendingDownIcon />}
+                            {isIncome ? <TrendingUpIcon sx={{ fontSize: { xs: 16, sm: 20 } }} /> : <TrendingDownIcon sx={{ fontSize: { xs: 16, sm: 20 } }} />}
                         </Box>
                     </Grid>
                     
                     <Grid item xs>
-                        <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                        <Typography variant="body1" sx={{ fontWeight: 500, fontSize: { xs: '0.9rem', sm: '1rem' } }}>
                             {transaction.description}
                         </Typography>
-                        <Box sx={{ display: 'flex', gap: 1, mt: 0.5, alignItems: 'center' }}>
+                        <Box sx={{ display: 'flex', gap: 0.5, mt: 0.5, alignItems: 'center', flexWrap: 'wrap' }}>
                             <Chip
                                 label={transaction.category}
                                 size="small"
                                 variant="outlined"
-                                sx={{ fontSize: '0.75rem' }}
+                                sx={{ fontSize: '0.7rem', height: 20 }}
                             />
-                            <Typography variant="caption" color="text.secondary">
+                            <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
                                 {transaction.date}
                             </Typography>
                             {(transaction as any).cost && (
-                                <Typography variant="caption" color="warning.main">
+                                <Typography variant="caption" color="warning.main" sx={{ fontSize: '0.7rem' }}>
                                     成本: ${(transaction as any).cost.toFixed(2)}
                                 </Typography>
                             )}
                         </Box>
                     </Grid>
                     
-                    <Grid item>
+                    <Grid item xs={3} sx={{ textAlign: 'right' }}>
                         <Typography
-                            variant="h6"
+                            variant="body1"
                             color={isIncome ? 'success.main' : 'error.main'}
-                            sx={{ fontWeight: 600 }}
+                            sx={{ fontWeight: 600, fontSize: { xs: '0.95rem', sm: '1.25rem' } }}
                         >
                             {isIncome ? '+' : '-'}${transaction.amount.toFixed(2)}
                         </Typography>
                     </Grid>
                     
                     <Grid item>
-                        <Box sx={{ display: 'flex', gap: 0.5 }}>
+                        <Box sx={{ display: 'flex', gap: 0.25 }}>
                             <Tooltip title="编辑">
                                 <IconButton
                                     size="small"
                                     onClick={() => handleEdit(transaction)}
-                                    sx={{ color: 'text.secondary' }}
+                                    sx={{ color: 'text.secondary', p: 0.5 }}
                                 >
                                     <EditIcon fontSize="small" />
                                 </IconButton>
@@ -123,7 +126,7 @@ const TransactionList: React.FC = () => {
                                 <IconButton
                                     size="small"
                                     onClick={() => handleDelete(transaction.id)}
-                                    sx={{ color: 'text.secondary' }}
+                                    sx={{ color: 'text.secondary', p: 0.5 }}
                                 >
                                     <DeleteIcon fontSize="small" />
                                 </IconButton>
@@ -136,9 +139,9 @@ const TransactionList: React.FC = () => {
     };
 
     return (
-        <Paper sx={{ mt: 2, p: 0, overflow: 'hidden' }}>
-            <Box sx={{ p: 3, borderBottom: '1px solid', borderColor: 'divider' }}>
-                <Typography variant="h4" sx={{ fontWeight: 600 }}>
+        <Paper sx={{ mt: { xs: 1, sm: 2 }, p: 0, overflow: 'hidden' }}>
+            <Box sx={{ p: { xs: 2, sm: 3 }, borderBottom: '1px solid', borderColor: 'divider' }}>
+                <Typography variant="h5" sx={{ fontWeight: 600 }}>
                     交易记录
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
@@ -146,7 +149,7 @@ const TransactionList: React.FC = () => {
                 </Typography>
             </Box>
             
-            <Box sx={{ p: 3, maxHeight: 600, overflowY: 'auto' }}>
+            <Box sx={{ p: { xs: 1.5, sm: 3 }, maxHeight: { xs: '50vh', sm: 600 }, overflowY: 'auto' }}>
                 {sortedTransactions.length === 0 ? (
                     <Box sx={{ textAlign: 'center', py: 8 }}>
                         <Typography variant="body1" color="text.secondary">

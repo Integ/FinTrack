@@ -51,7 +51,7 @@ const TransactionSummary: React.FC = () => {
     }> = ({ title, value, color, icon, trend }) => (
         <Paper
             sx={{
-                p: 3,
+                p: { xs: 2, sm: 3 },
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
@@ -64,27 +64,31 @@ const TransactionSummary: React.FC = () => {
                 },
             }}
         >
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: { xs: 1, sm: 2 } }}>
                 <Box sx={{ 
-                    p: 1, 
+                    p: 0.75, 
                     borderRadius: 1, 
                     backgroundColor: `${color}15`,
                     color: color,
-                    mr: 2
+                    mr: 1.5,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
                 }}>
                     {icon}
                 </Box>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
                     {title}
                 </Typography>
             </Box>
             
             <Typography 
-                variant="h4" 
+                variant="h5" 
                 sx={{ 
                     fontWeight: 600,
                     color: color,
-                    mb: trend !== undefined ? 1 : 0
+                    mb: trend !== undefined ? 0.5 : 0,
+                    fontSize: { xs: '1.25rem', sm: '1.5rem' }
                 }}
             >
                 ${value.toFixed(2)}
@@ -93,9 +97,9 @@ const TransactionSummary: React.FC = () => {
             {trend !== undefined && (
                 <Box sx={{ display: 'flex', alignItems: 'center', mt: 'auto' }}>
                     {trend > 0 ? (
-                        <TrendingUpIcon sx={{ fontSize: 16, color: 'success.main', mr: 0.5 }} />
+                        <TrendingUpIcon sx={{ fontSize: 14, color: 'success.main', mr: 0.5 }} />
                     ) : (
-                        <TrendingDownIcon sx={{ fontSize: 16, color: 'error.main', mr: 0.5 }} />
+                        <TrendingDownIcon sx={{ fontSize: 14, color: 'error.main', mr: 0.5 }} />
                     )}
                     <Typography variant="caption" color="text.secondary">
                         {Math.abs(trend).toFixed(1)}%
@@ -106,12 +110,12 @@ const TransactionSummary: React.FC = () => {
     );
 
     return (
-        <Box sx={{ mb: 4 }}>
-            <Typography variant="h4" sx={{ mb: 3, fontWeight: 600 }}>
+        <Box sx={{ mb: { xs: 2, sm: 4 } }}>
+            <Typography variant="h5" sx={{ mb: { xs: 2, sm: 3 }, fontWeight: 600 }}>
                 财务概览
             </Typography>
             
-            <Grid container spacing={2}>
+            <Grid container spacing={1.5}>
                 <Grid item xs={12} sm={6} md={3}>
                     <SummaryCard
                         title="总收入"

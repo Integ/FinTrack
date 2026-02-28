@@ -5,7 +5,7 @@ import Header from '../components/Header';
 import TransactionList from '../components/TransactionList';
 import TransactionForm from '../components/TransactionForm';
 import TransactionSummary from '../components/TransactionSummary';
-import DailyChart from '../components/DailyChart';
+import PeriodStats from '../components/PeriodStats';
 
 const Dashboard: React.FC = () => {
     const [isFormOpen, setIsFormOpen] = useState(false);
@@ -23,12 +23,12 @@ const Dashboard: React.FC = () => {
                 }}
             >
                 <TransactionSummary />
-                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: 3 }}>
-                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: { xs: 2, sm: 3 } }}>
+                    <Box sx={{ flex: 1, minWidth: 0, width: { xs: '100%', lg: 'auto' } }}>
                         <TransactionList />
                     </Box>
-                    <Box sx={{ width: { lg: '400px' }, flexShrink: 0 }}>
-                        <DailyChart />
+                    <Box sx={{ width: { xs: '100%', lg: '400px' }, flexShrink: 0 }}>
+                        <PeriodStats />
                     </Box>
                 </Box>
                 
