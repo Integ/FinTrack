@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { AppBar, Toolbar, Typography, IconButton, Box, Tooltip } from '@mui/material';
+import { AppBar, Toolbar, Typography, IconButton, Box, Tooltip, Button } from '@mui/material';
 import { FileUpload as FileUploadIcon, FileDownload as FileDownloadIcon } from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store';
@@ -125,44 +125,73 @@ const Header: React.FC = () => {
     };
 
     return (
-        <AppBar position="static" sx={{ height: 64 }}>
-            <Toolbar sx={{ height: 64, minHeight: 'auto !important' }}>
+        <AppBar position="static" sx={{ height: { xs: 72, sm: 78 } }}>
+            <Toolbar sx={{ height: { xs: 72, sm: 78 }, minHeight: 'auto !important' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
-                    <Typography 
-                        variant="h6" 
-                        component="div" 
-                        sx={{ 
-                            fontWeight: 600,
-                            fontSize: '1.125rem',
-                            letterSpacing: '-0.025em'
-                        }}
-                    >
-                        FinTrack
-                    </Typography>
+                    <Box>
+                        <Typography
+                            variant="h6"
+                            component="div"
+                            sx={{
+                                fontWeight: 700,
+                                fontSize: '1.125rem',
+                                letterSpacing: '-0.025em'
+                            }}
+                        >
+                            FinTrack
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                            副业收入记录
+                        </Typography>
+                    </Box>
                 </Box>
                 
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Tooltip title="导入数据">
-                        <IconButton
+                        <Button
                             size="small"
+                            variant="outlined"
+                            startIcon={<FileUploadIcon fontSize="small" />}
                             onClick={() => fileInputRef.current?.click()}
                             sx={{ 
                                 color: 'text.secondary',
-                                '&:hover': { color: 'primary.main' }
+                                borderColor: 'divider',
+                                '&:hover': { borderColor: 'primary.main' },
+                                display: { xs: 'none', sm: 'inline-flex' },
                             }}
+                        >
+                            导入
+                        </Button>
+                    </Tooltip>
+                    
+                    <Tooltip title="导出数据">
+                        <Button
+                            size="small"
+                            variant="contained"
+                            startIcon={<FileDownloadIcon fontSize="small" />}
+                            onClick={handleExport}
+                            sx={{ 
+                                display: { xs: 'none', sm: 'inline-flex' },
+                            }}
+                        >
+                            导出
+                        </Button>
+                    </Tooltip>
+
+                    <Tooltip title="导入数据">
+                        <IconButton
+                            size="small"
+                            onClick={() => fileInputRef.current?.click()}
+                            sx={{ display: { xs: 'inline-flex', sm: 'none' }, color: 'text.secondary' }}
                         >
                             <FileUploadIcon fontSize="small" />
                         </IconButton>
                     </Tooltip>
-                    
                     <Tooltip title="导出数据">
                         <IconButton
                             size="small"
                             onClick={handleExport}
-                            sx={{ 
-                                color: 'text.secondary',
-                                '&:hover': { color: 'primary.main' }
-                            }}
+                            sx={{ display: { xs: 'inline-flex', sm: 'none' }, color: 'text.secondary' }}
                         >
                             <FileDownloadIcon fontSize="small" />
                         </IconButton>

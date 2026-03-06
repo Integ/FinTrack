@@ -38,13 +38,13 @@ const theme = createTheme({
         divider: 'rgba(148, 163, 184, 0.1)',
     },
     typography: {
-        fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        fontFamily: '"Manrope", "Avenir Next", "Segoe UI", sans-serif',
         h4: {
-            fontWeight: 600,
+            fontWeight: 700,
             fontSize: '1.5rem',
         },
         h6: {
-            fontWeight: 500,
+            fontWeight: 600,
             fontSize: '1rem',
         },
         body1: {
@@ -60,6 +60,29 @@ const theme = createTheme({
                     boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)',
                     backgroundColor: '#1E293B',
                     border: '1px solid rgba(148, 163, 184, 0.1)',
+                },
+            },
+        },
+        MuiToggleButton: {
+            styleOverrides: {
+                root: {
+                    textTransform: 'none',
+                    borderColor: 'rgba(148, 163, 184, 0.15)',
+                    color: '#CBD5E1',
+                    '&.Mui-selected': {
+                        backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                        color: '#BFDBFE',
+                        borderColor: 'rgba(59, 130, 246, 0.5)',
+                    },
+                },
+            },
+        },
+        MuiTextField: {
+            styleOverrides: {
+                root: {
+                    '& .MuiOutlinedInput-root': {
+                        borderRadius: 10,
+                    },
                 },
             },
         },
@@ -105,11 +128,13 @@ const App: React.FC = () => {
             <ThemeProvider theme={theme}>
                 <CssBaseline />
                 <Box
-                    sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        minHeight: '100vh',
-                    }}
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    minHeight: '100vh',
+                    background:
+                        'radial-gradient(circle at top right, rgba(37, 99, 235, 0.2), transparent 40%), #0F172A',
+                }}
                 >
                     <Dashboard />
                     <Footer />

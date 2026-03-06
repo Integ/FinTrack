@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Fab, Box } from '@mui/material';
+import { Container, Fab, Box, Button, Stack, Typography } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
 import Header from '../components/Header';
 import TransactionList from '../components/TransactionList';
@@ -22,6 +22,32 @@ const Dashboard: React.FC = () => {
                     px: { xs: 2, sm: 3 }
                 }}
             >
+                <Stack
+                    direction={{ xs: 'column', sm: 'row' }}
+                    justifyContent="space-between"
+                    alignItems={{ xs: 'flex-start', sm: 'center' }}
+                    spacing={1.5}
+                    sx={{ mb: { xs: 2, sm: 3 } }}
+                >
+                    <Box>
+                        <Typography variant="h4" sx={{ fontWeight: 700, fontSize: { xs: '1.3rem', sm: '1.5rem' } }}>
+                            收入看板
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            记录每笔副业收支，快速查看趋势变化
+                        </Typography>
+                    </Box>
+
+                    <Button
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        onClick={() => setIsFormOpen(true)}
+                        sx={{ display: { xs: 'none', sm: 'inline-flex' } }}
+                    >
+                        新增交易
+                    </Button>
+                </Stack>
+
                 <TransactionSummary />
                 <Box sx={{ display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: { xs: 2, sm: 3 } }}>
                     <Box sx={{ flex: 1, minWidth: 0, width: { xs: '100%', lg: 'auto' } }}>

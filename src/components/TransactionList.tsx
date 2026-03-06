@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
     IconButton,
     Typography,
@@ -7,12 +7,17 @@ import {
     Chip,
     Tooltip,
     Grid,
+    ToggleButtonGroup,
+    ToggleButton,
+    TextField,
+    InputAdornment,
 } from '@mui/material';
 import {
     Delete as DeleteIcon,
     Edit as EditIcon,
     TrendingUp as TrendingUpIcon,
     TrendingDown as TrendingDownIcon,
+    Search as SearchIcon,
 } from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store';
@@ -20,12 +25,16 @@ import { deleteTransaction } from '../store/transactionSlice';
 import { Transaction } from '../types/transaction';
 import TransactionForm from './TransactionForm';
 
+type FilterType = 'all' | 'income' | 'expense';
+
 const TransactionList: React.FC = () => {
     const dispatch = useDispatch();
     const transactions = useSelector(
         (state: RootState) => state.transactions.transactions
     );
     const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
+    const [filterType, setFilterType] = useState<FilterType>('all');
+    const [keyword, setKeyword] = useState('');
 
     const handleDelete = (id: string) => {
         dispatch(deleteTransaction(id));
@@ -39,10 +48,23 @@ const TransactionList: React.FC = () => {
         setEditingTransaction(null);
     };
 
-    // Sort transactions by date (newest first)
-    const sortedTransactions = [...transactions].sort((a, b) => 
-        new Date(b.date).getTime() - new Date(a.date).getTime()
-    );
+    const filteredTransactions = useMemo(() => {
+        const normalizedKeyword = keyword.trim().toLowerCase();
+
+        return [...transactions]
+            .filter((transaction) => filterType === 'all' || transaction.type === filterType)
+            .filter((transaction) => {
+                if (!normalizedKeyword) {
+                    return true;
+                }
+
+                return (
+                    transaction.description.toLowerCase().includes(normalizedKeyword) ||
+                    transaction.category.toLowerCase().includes(normalizedKeyword)
+                );
+            })
+            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    }, [transactions, filterType, keyword]);
 
     const TransactionItem: React.FC<{ transaction: Transaction }> = ({ transaction }) => {
         const isIncome = transaction.type === 'income';
@@ -145,22 +167,53 @@ const TransactionList: React.FC = () => {
                     交易记录
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                    共 {transactions.length} 笔交易
+                    共 {transactions.length} 笔，当前显示 {filteredTransactions.length} 笔
                 </Typography>
+
+                <Box sx={{ mt: 2, display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
+                    <ToggleButtonGroup
+                        color="primary"
+                        size="small"
+                        value={filterType}
+                        exclusive
+                        onChange={(_, value: FilterType | null) => {
+                            if (value) setFilterType(value);
+                        }}
+                    >
+                        <ToggleButton value="all">全部</ToggleButton>
+                        <ToggleButton value="income">收入</ToggleButton>
+                        <ToggleButton value="expense">支出</ToggleButton>
+                    </ToggleButtonGroup>
+
+                    <TextField
+                        size="small"
+                        placeholder="搜索描述/类别"
+                        value={keyword}
+                        onChange={(e) => setKeyword(e.target.value)}
+                        sx={{ minWidth: { xs: '100%', sm: 220 }, flex: { sm: '0 0 auto' } }}
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <SearchIcon fontSize="small" />
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
+                </Box>
             </Box>
             
             <Box sx={{ p: { xs: 1.5, sm: 3 }, maxHeight: { xs: '50vh', sm: 600 }, overflowY: 'auto' }}>
-                {sortedTransactions.length === 0 ? (
+                {filteredTransactions.length === 0 ? (
                     <Box sx={{ textAlign: 'center', py: 8 }}>
                         <Typography variant="body1" color="text.secondary">
-                            暂无交易记录
+                            没有匹配的记录
                         </Typography>
                         <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                            点击右下角的添加按钮开始记录您的第一笔交易
+                            可以调整筛选条件，或点击右下角按钮新增交易
                         </Typography>
                     </Box>
                 ) : (
-                    sortedTransactions.map((transaction) => (
+                    filteredTransactions.map((transaction) => (
                         <TransactionItem key={transaction.id} transaction={transaction} />
                     ))
                 )}
