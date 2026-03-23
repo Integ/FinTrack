@@ -1,6 +1,5 @@
 import React from 'react';
-import { Box, Container, Typography, Paper } from '@mui/material';
-import logo from '../assets/logo.png';
+import { Box, Chip, Container, Paper, Typography } from '@mui/material';
 
 const Footer: React.FC = () => {
     return (
@@ -8,99 +7,90 @@ const Footer: React.FC = () => {
             component="footer"
             sx={{
                 mt: 'auto',
-                py: 3,
-                background: 'linear-gradient(145deg, #1E1E1E 0%, #2A2A2A 100%)',
-                borderTop: '1px solid rgba(255, 215, 0, 0.1)',
+                py: { xs: 2, sm: 2.5 },
+                background: 'rgba(15, 23, 42, 0.72)',
+                backdropFilter: 'blur(14px)',
+                borderTop: '1px solid rgba(148, 163, 184, 0.12)',
+                borderRadius: 0,
+                boxShadow: 'none',
             }}
         >
-            <Container maxWidth="md">
+            <Container maxWidth="lg">
                 <Box
                     sx={{
                         display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
+                        flexDirection: { xs: 'column', md: 'row' },
+                        alignItems: { xs: 'flex-start', md: 'center' },
+                        justifyContent: 'space-between',
                         gap: 2,
                     }}
                 >
                     <Box
-                        component="img"
-                        src={logo}
-                        alt="FinTrack Logo"
-                        sx={{
-                            height: 60,
-                            objectFit: 'contain',
-                            opacity: 0.9,
-                        }}
-                    />
-                    <Typography
-                        variant="h6"
-                        align="center"
-                        sx={{ color: '#FFD700' }}
-                    >
-                        FinTrack - 财务追踪助手
-                    </Typography>
-                    <Typography
-                        variant="body1"
-                        align="center"
-                        color="text.secondary"
-                        sx={{ maxWidth: 600 }}
-                    >
-                        轻松记录每一笔收支，智能统计分析您的财务状况。
-                        帮助您更好地规划预算，实现财务目标。
-                    </Typography>
-                    <Box
                         sx={{
                             display: 'flex',
-                            gap: 4,
-                            mt: 1,
+                            flexDirection: 'column',
+                            gap: 0.5,
                         }}
                     >
-                        <Feature
-                            title="便捷记账"
-                            description="快速记录日常收支，分类明确，一目了然"
-                        />
-                        <Feature
-                            title="智能分析"
-                            description="自动计算收入支出，实时掌握财务状况"
-                        />
-                        <Feature
-                            title="安全可靠"
-                            description="数据本地存储，确保您的隐私安全"
-                        />
+                        <Typography
+                            variant="subtitle1"
+                            sx={{
+                                color: 'text.primary',
+                                fontWeight: 700,
+                                letterSpacing: '-0.02em',
+                            }}
+                        >
+                            FinTrack
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            简洁记录每一笔收支，清楚掌握现金流。
+                        </Typography>
                     </Box>
-                    <Typography
-                        variant="caption"
-                        color="text.secondary"
-                        sx={{ mt: 2 }}
-                    >
-                        © {new Date().getFullYear()} FinTrack. All rights reserved.
-                    </Typography>
+
+                    <Box sx={{ width: { xs: '100%', md: 'auto' } }}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                flexWrap: 'wrap',
+                                gap: 1,
+                                justifyContent: { xs: 'flex-start', md: 'flex-end' },
+                                mb: 1,
+                            }}
+                        >
+                            <Chip
+                                label="本地存储"
+                                size="small"
+                                sx={chipStyles}
+                            />
+                            <Chip
+                                label="CSV 导入 / 导出"
+                                size="small"
+                                sx={chipStyles}
+                            />
+                        </Box>
+                        <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            sx={{ display: 'block', textAlign: { xs: 'left', md: 'right' } }}
+                        >
+                            © {new Date().getFullYear()} FinTrack
+                        </Typography>
+                    </Box>
                 </Box>
             </Container>
         </Paper>
     );
 };
 
-interface FeatureProps {
-    title: string;
-    description: string;
-}
-
-const Feature: React.FC<FeatureProps> = ({ title, description }) => (
-    <Box sx={{ textAlign: 'center', maxWidth: 200 }}>
-        <Typography
-            variant="subtitle1"
-            sx={{ color: '#FFD700', mb: 1 }}
-        >
-            {title}
-        </Typography>
-        <Typography
-            variant="body2"
-            color="text.secondary"
-        >
-            {description}
-        </Typography>
-    </Box>
-);
+const chipStyles = {
+    height: 28,
+    color: '#CBD5E1',
+    backgroundColor: 'rgba(30, 41, 59, 0.88)',
+    border: '1px solid rgba(148, 163, 184, 0.12)',
+    '& .MuiChip-label': {
+        px: 1.25,
+        fontSize: '0.75rem',
+    },
+};
 
 export default Footer;

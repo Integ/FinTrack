@@ -49,13 +49,14 @@
     <div class="container">
       <h1>404</h1>
       <p>页面未找到</p>
-      <a href="/" class="btn">返回首页</a>
+      <a href="./" class="btn">返回首页</a>
     </div>
     
     <script>
       // 处理React Router的情况
-      if (window.location.pathname !== '/404.html') {
-        window.location.href = '/#' + window.location.pathname;
+      if (!window.location.pathname.endsWith('/404.html')) {
+        const basePath = window.location.pathname.replace(/[^/]+$/, '');
+        window.location.href = basePath;
       }
     </script>
   </body>
