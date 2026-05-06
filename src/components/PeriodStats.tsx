@@ -117,7 +117,7 @@ const PeriodStats: React.FC = () => {
         label: string;
         subtitle: string;
         days: number;
-        icon: React.ReactNode;
+        icon: React.ReactElement;
     }> = {
         daily: {
             label: '每日 Report',
