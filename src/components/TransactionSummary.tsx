@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { Transaction } from '../types/transaction';
 import { TrendingUp as TrendingUpIcon, TrendingDown as TrendingDownIcon, TrackChanges as TargetIcon } from '@mui/icons-material';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface Summary {
     totalIncome: number;
@@ -17,6 +18,7 @@ const TransactionSummary: React.FC = () => {
     const transactions = useSelector(
         (state: RootState) => state.transactions.transactions
     );
+    const { t } = useLanguage();
 
     const summary = transactions.reduce<Summary>(
         (acc: Summary, transaction: Transaction) => {
@@ -112,13 +114,13 @@ const TransactionSummary: React.FC = () => {
     return (
         <Box sx={{ mb: { xs: 2, sm: 4 } }}>
             <Typography variant="h5" sx={{ mb: { xs: 2, sm: 3 }, fontWeight: 600 }}>
-                财务概览
+                {t.summary.title}
             </Typography>
             
             <Grid container spacing={1.5}>
                 <Grid item xs={12} sm={6} md={3}>
                     <SummaryCard
-                        title="总收入"
+                        title={t.summary.totalIncome}
                         value={summary.totalIncome}
                         color="success.main"
                         icon={<TrendingUpIcon />}
@@ -126,7 +128,7 @@ const TransactionSummary: React.FC = () => {
                 </Grid>
                 <Grid item xs={12} sm={6} md={3}>
                     <SummaryCard
-                        title="净利润"
+                        title={t.summary.netProfit}
                         value={summary.profit}
                         color={summary.profit >= 0 ? 'success.main' : 'error.main'}
                         icon={summary.profit >= 0 ? <TrendingUpIcon /> : <TrendingDownIcon />}
@@ -134,7 +136,7 @@ const TransactionSummary: React.FC = () => {
                 </Grid>
                 <Grid item xs={12} sm={6} md={3}>
                     <SummaryCard
-                        title="总成本"
+                        title={t.summary.totalCosts}
                         value={summary.costs}
                         color="warning.main"
                         icon={<TargetIcon />}
@@ -142,7 +144,7 @@ const TransactionSummary: React.FC = () => {
                 </Grid>
                 <Grid item xs={12} sm={6} md={3}>
                     <SummaryCard
-                        title="总支出"
+                        title={t.summary.totalExpense}
                         value={summary.totalExpense}
                         color="error.main"
                         icon={<TrendingDownIcon />}

@@ -2,6 +2,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { ThemeProvider, createTheme, CssBaseline, Box } from '@mui/material';
 import { store } from './store';
+import { LanguageProvider } from './i18n/LanguageContext';
 import Dashboard from './pages/Dashboard';
 import Footer from './components/Footer';
 
@@ -125,21 +126,23 @@ const theme = createTheme({
 const App: React.FC = () => {
     return (
         <Provider store={store}>
-            <ThemeProvider theme={theme}>
-                <CssBaseline />
-                <Box
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    minHeight: '100vh',
-                    background:
-                        'radial-gradient(circle at top right, rgba(37, 99, 235, 0.2), transparent 40%), #0F172A',
-                }}
-                >
-                    <Dashboard />
-                    <Footer />
-                </Box>
-            </ThemeProvider>
+            <LanguageProvider>
+                <ThemeProvider theme={theme}>
+                    <CssBaseline />
+                    <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        minHeight: '100vh',
+                        background:
+                            'radial-gradient(circle at top right, rgba(37, 99, 235, 0.2), transparent 40%), #0F172A',
+                    }}
+                    >
+                        <Dashboard />
+                        <Footer />
+                    </Box>
+                </ThemeProvider>
+            </LanguageProvider>
         </Provider>
     );
 };

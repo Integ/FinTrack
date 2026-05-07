@@ -24,6 +24,7 @@ import { RootState } from '../store';
 import { deleteTransaction } from '../store/transactionSlice';
 import { Transaction } from '../types/transaction';
 import TransactionForm from './TransactionForm';
+import { useLanguage } from '../i18n/LanguageContext';
 
 type FilterType = 'all' | 'income' | 'expense';
 
@@ -32,6 +33,7 @@ const TransactionList: React.FC = () => {
     const transactions = useSelector(
         (state: RootState) => state.transactions.transactions
     );
+    const { t } = useLanguage();
     const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
     const [filterType, setFilterType] = useState<FilterType>('all');
     const [keyword, setKeyword] = useState('');
@@ -117,7 +119,7 @@ const TransactionList: React.FC = () => {
                             </Typography>
                             {(transaction as any).cost && (
                                 <Typography variant="caption" color="warning.main" sx={{ fontSize: '0.7rem' }}>
-                                    成本: ${(transaction as any).cost.toFixed(2)}
+                                    {t.list.cost} ${(transaction as any).cost.toFixed(2)}
                                 </Typography>
                             )}
                         </Box>
@@ -135,7 +137,7 @@ const TransactionList: React.FC = () => {
                     
                     <Grid item>
                         <Box sx={{ display: 'flex', gap: 0.25 }}>
-                            <Tooltip title="编辑">
+                            <Tooltip title={t.list.edit}>
                                 <IconButton
                                     size="small"
                                     onClick={() => handleEdit(transaction)}
@@ -144,7 +146,7 @@ const TransactionList: React.FC = () => {
                                     <EditIcon fontSize="small" />
                                 </IconButton>
                             </Tooltip>
-                            <Tooltip title="删除">
+                            <Tooltip title={t.list.delete}>
                                 <IconButton
                                     size="small"
                                     onClick={() => handleDelete(transaction.id)}
@@ -164,10 +166,10 @@ const TransactionList: React.FC = () => {
         <Paper sx={{ mt: { xs: 1, sm: 2 }, p: 0, overflow: 'hidden' }}>
             <Box sx={{ p: { xs: 2, sm: 3 }, borderBottom: '1px solid', borderColor: 'divider' }}>
                 <Typography variant="h5" sx={{ fontWeight: 600 }}>
-                    交易记录
+                    {t.list.title}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                    共 {transactions.length} 笔，当前显示 {filteredTransactions.length} 笔
+                    {t.list.totalRecords.replace('{total}', String(transactions.length)).replace('{showing}', String(filteredTransactions.length))}
                 </Typography>
 
                 <Box sx={{ mt: 2, display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
@@ -180,14 +182,14 @@ const TransactionList: React.FC = () => {
                             if (value) setFilterType(value);
                         }}
                     >
-                        <ToggleButton value="all">全部</ToggleButton>
-                        <ToggleButton value="income">收入</ToggleButton>
-                        <ToggleButton value="expense">支出</ToggleButton>
+                        <ToggleButton value="all">{t.list.filterAll}</ToggleButton>
+                        <ToggleButton value="income">{t.list.filterIncome}</ToggleButton>
+                        <ToggleButton value="expense">{t.list.filterExpense}</ToggleButton>
                     </ToggleButtonGroup>
 
                     <TextField
                         size="small"
-                        placeholder="搜索描述/类别"
+                        placeholder={t.list.searchPlaceholder}
                         value={keyword}
                         onChange={(e) => setKeyword(e.target.value)}
                         sx={{ minWidth: { xs: '100%', sm: 220 }, flex: { sm: '0 0 auto' } }}
@@ -206,10 +208,10 @@ const TransactionList: React.FC = () => {
                 {filteredTransactions.length === 0 ? (
                     <Box sx={{ textAlign: 'center', py: 8 }}>
                         <Typography variant="body1" color="text.secondary">
-                            没有匹配的记录
+                            {t.list.noRecords}
                         </Typography>
                         <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                            可以调整筛选条件，或点击右下角按钮新增交易
+                            {t.list.noRecordsHint}
                         </Typography>
                     </Box>
                 ) : (

@@ -1,7 +1,9 @@
 import React from 'react';
 import { Box, Chip, Container, Paper, Typography } from '@mui/material';
+import { useLanguage } from '../i18n/LanguageContext';
 
 const Footer: React.FC = () => {
+    const { t } = useLanguage();
     return (
         <Paper
             component="footer"
@@ -43,7 +45,7 @@ const Footer: React.FC = () => {
                             FinTrack
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                            简洁记录每一笔收支，清楚掌握现金流。
+                            {t.footer.description}
                         </Typography>
                     </Box>
 
@@ -58,12 +60,12 @@ const Footer: React.FC = () => {
                             }}
                         >
                             <Chip
-                                label="本地存储"
+                                label={t.footer.localStorage}
                                 size="small"
                                 sx={chipStyles}
                             />
                             <Chip
-                                label="CSV 导入 / 导出"
+                                label={t.footer.csvImportExport}
                                 size="small"
                                 sx={chipStyles}
                             />
@@ -73,7 +75,7 @@ const Footer: React.FC = () => {
                             color="text.secondary"
                             sx={{ display: 'block', textAlign: { xs: 'left', md: 'right' } }}
                         >
-                            © {new Date().getFullYear()} FinTrack
+                            {t.footer.copyright} {new Date().getFullYear()} FinTrack
                         </Typography>
                     </Box>
                 </Box>

@@ -18,6 +18,7 @@ import { useDispatch } from 'react-redux';
 import { addTransaction, updateTransaction } from '../store/transactionSlice';
 import { Transaction } from '../types/transaction';
 import { v4 as uuidv4 } from 'uuid';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface TransactionFormProps {
     open: boolean;
@@ -27,6 +28,7 @@ interface TransactionFormProps {
 
 const TransactionForm: React.FC<TransactionFormProps> = ({ open, onClose, editingTransaction }) => {
     const dispatch = useDispatch();
+    const { t } = useLanguage();
     // Keep amount as string in the form state so we can represent an empty field.
     const [transaction, setTransaction] = useState<{
         date: string;
@@ -93,7 +95,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ open, onClose, editin
         >
             <DialogTitle sx={{ pb: 1 }}>
                 <Typography variant="h4" component="div" sx={{ fontWeight: 600 }}>
-                    {editingTransaction ? '编辑交易' : '新增交易'}
+                    {editingTransaction ? t.form.editTransaction : t.form.newTransaction}
                 </Typography>
             </DialogTitle>
             
@@ -101,7 +103,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ open, onClose, editin
                 <Grid container spacing={3}>
                     <Grid item xs={12}>
                         <TextField
-                            label="日期"
+                            label={t.form.date}
                             type="date"
                             fullWidth
                             value={transaction.date}
@@ -115,9 +117,9 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ open, onClose, editin
                     
                     <Grid item xs={12}>
                         <FormControl fullWidth variant="outlined">
-                            <InputLabel>交易类型</InputLabel>
+                            <InputLabel>{t.form.transactionType}</InputLabel>
                             <Select
-                                label="交易类型"
+                                label={t.form.transactionType}
                                 value={transaction.type}
                                 onChange={(e) =>
                                     setTransaction({
@@ -129,13 +131,13 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ open, onClose, editin
                                 <MenuItem value="income">
                                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                         <Typography color="success.main" sx={{ mr: 1 }}>+</Typography>
-                                        收入
+                                        {t.form.income}
                                     </Box>
                                 </MenuItem>
                                 <MenuItem value="expense">
                                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                         <Typography color="error.main" sx={{ mr: 1 }}>-</Typography>
-                                        支出
+                                        {t.form.expense}
                                     </Box>
                                 </MenuItem>
                             </Select>
@@ -144,7 +146,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ open, onClose, editin
                     
                     <Grid item xs={12} md={transaction.type === 'income' ? 6 : 12}>
                         <TextField
-                            label="金额"
+                            label={t.form.amount}
                             type="number"
                             fullWidth
                             value={transaction.amount}
@@ -166,7 +168,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ open, onClose, editin
                     {transaction.type === 'income' && (
                         <Grid item xs={12} md={6}>
                             <TextField
-                                label="成本"
+                                label={t.form.cost}
                                 type="number"
                                 fullWidth
                                 value={transaction.cost}
@@ -177,7 +179,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ open, onClose, editin
                                     })
                                 }
                                 variant="outlined"
-                                helperText="可选：记录与收入相关的成本"
+                                helperText={t.form.costHelper}
                                 InputProps={{
                                     startAdornment: (
                                         <Typography sx={{ mr: 1, color: 'text.secondary' }}>$</Typography>
@@ -189,20 +191,20 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ open, onClose, editin
                     
                     <Grid item xs={12}>
                         <TextField
-                            label="类别"
+                            label={t.form.category}
                             fullWidth
                             value={transaction.category}
                             onChange={(e) =>
                                 setTransaction({ ...transaction, category: e.target.value })
                             }
                             variant="outlined"
-                            placeholder="例如：工资、餐饮、交通等"
+                            placeholder={t.form.categoryPlaceholder}
                         />
                     </Grid>
                     
                     <Grid item xs={12}>
                         <TextField
-                            label="描述"
+                            label={t.form.description}
                             fullWidth
                             multiline
                             rows={3}
@@ -214,7 +216,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ open, onClose, editin
                                 })
                             }
                             variant="outlined"
-                            placeholder="添加详细描述..."
+                            placeholder={t.form.descriptionPlaceholder}
                         />
                     </Grid>
                 </Grid>
@@ -226,7 +228,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ open, onClose, editin
                     size="large"
                     sx={{ borderRadius: 2 }}
                 >
-                    取消
+                    {t.form.cancel}
                 </Button>
                 <Button 
                     onClick={handleSubmit}
@@ -236,7 +238,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ open, onClose, editin
                     sx={{ borderRadius: 2, px: 3 }}
                     disabled={!transaction.amount || !transaction.category}
                 >
-                    {editingTransaction ? '更新' : '保存'}
+                    {editingTransaction ? t.form.update : t.form.save}
                 </Button>
             </DialogActions>
         </Dialog>

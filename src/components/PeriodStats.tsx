@@ -24,6 +24,7 @@ import {
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { Transaction } from '../types/transaction';
+import { useLanguage } from '../i18n/LanguageContext';
 
 type ReportTab = 'daily' | 'last7Days' | 'last30Days';
 
@@ -42,6 +43,7 @@ const PeriodStats: React.FC = () => {
     const transactions = useSelector(
         (state: RootState) => state.transactions.transactions
     );
+    const { t } = useLanguage();
     const [activeTab, setActiveTab] = useState<ReportTab>('daily');
 
     const formatLocalDate = (d: Date): string => {
@@ -120,20 +122,20 @@ const PeriodStats: React.FC = () => {
         icon: React.ReactElement;
     }> = {
         daily: {
-            label: '每日 Report',
-            subtitle: '今天的营业统计',
+            label: t.stats.daily,
+            subtitle: t.stats.dailySubtitle,
             days: 1,
             icon: <TodayIcon sx={{ fontSize: 16 }} />,
         },
         last7Days: {
-            label: '最近七天 Report',
-            subtitle: '含今天在内最近 7 天',
+            label: t.stats.last7Days,
+            subtitle: t.stats.last7DaysSubtitle,
             days: 7,
             icon: <DateRangeIcon sx={{ fontSize: 16 }} />,
         },
         last30Days: {
-            label: '最近30天 Report',
-            subtitle: '含今天在内最近 30 天',
+            label: t.stats.last30Days,
+            subtitle: t.stats.last30DaysSubtitle,
             days: 30,
             icon: <CalendarMonthIcon sx={{ fontSize: 16 }} />,
         },
@@ -234,7 +236,7 @@ const PeriodStats: React.FC = () => {
         <Paper sx={{ mt: { xs: 1, sm: 2 }, overflow: 'hidden' }}>
             <Box sx={{ p: { xs: 2, sm: 3 }, borderBottom: '1px solid', borderColor: 'divider' }}>
                 <Typography variant="h5" sx={{ fontWeight: 600, mb: 0.8 }}>
-                    Sales Report
+                    {t.stats.title}
                 </Typography>
                 <Stack direction="row" spacing={1} alignItems="center" sx={{ color: 'text.secondary' }}>
                     {currentConfig.icon}
@@ -273,32 +275,32 @@ const PeriodStats: React.FC = () => {
             <Box sx={{ p: { xs: 2, sm: 3 }, display: 'flex', flexDirection: 'column', gap: 2 }}>
                 <Grid container spacing={1.5}>
                     <SummaryTile
-                        label="总销售额"
+                        label={t.stats.totalSales}
                         value={formatCurrency(currentReport.income)}
                         icon={<PointOfSaleIcon fontSize="small" />}
                         color="#2e7d32"
-                        helper={`${currentReport.incomeCount} 笔收入`}
+                        helper={`${currentReport.incomeCount} ${t.stats.incomeCount}`}
                     />
                     <SummaryTile
-                        label="净额"
+                        label={t.stats.netAmount}
                         value={formatCurrency(currentReport.profit)}
                         icon={currentReport.profit >= 0 ? <TrendingUpIcon fontSize="small" /> : <TrendingDownIcon fontSize="small" />}
                         color={currentReport.profit >= 0 ? '#2e7d32' : '#d32f2f'}
-                        helper={`日均 ${formatCurrency(averageNet)}`}
+                        helper={`${t.stats.dailyAverage} ${formatCurrency(averageNet)}`}
                     />
                     <SummaryTile
-                        label="总成本"
+                        label={t.stats.totalCosts}
                         value={formatCurrency(currentReport.costs)}
                         icon={<SavingsIcon fontSize="small" />}
                         color="#ed6c02"
-                        helper="收入记录关联成本"
+                        helper={t.stats.costNote}
                     />
                     <SummaryTile
-                        label="总支出"
+                        label={t.stats.totalExpense}
                         value={formatCurrency(currentReport.totalExpense)}
                         icon={<PaymentsIcon fontSize="small" />}
                         color="#d32f2f"
-                        helper={`成本 + ${currentReport.expenseCount} 笔支出`}
+                        helper={`${t.stats.expenseNote} ${currentReport.expenseCount}`}
                     />
                 </Grid>
 
@@ -314,33 +316,33 @@ const PeriodStats: React.FC = () => {
                     <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.2 }}>
                         <ReceiptLongIcon sx={{ fontSize: 18, color: 'primary.main' }} />
                         <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                            Report 明细
+                            {t.stats.reportDetail}
                         </Typography>
-                        <Chip size="small" label={`${currentReport.transactionCount} 笔`} variant="outlined" />
+                        <Chip size="small" label={`${currentReport.transactionCount} ${t.stats.transactions}`} variant="outlined" />
                     </Stack>
                     <Stack spacing={1}>
-                        <DetailRow label="Gross Sales / 总销售额" value={formatCurrency(currentReport.income)} tone="success" />
-                        <DetailRow label="Cost of Goods / 商品成本" value={formatCurrency(currentReport.costs)} tone="warning" />
-                        <DetailRow label="Extra Expense / 额外支出" value={formatCurrency(currentReport.expense)} tone="error" />
+                        <DetailRow label={t.stats.grossSales} value={formatCurrency(currentReport.income)} tone="success" />
+                        <DetailRow label={t.stats.costOfGoods} value={formatCurrency(currentReport.costs)} tone="warning" />
+                        <DetailRow label={t.stats.extraExpense} value={formatCurrency(currentReport.expense)} tone="error" />
                         <Divider />
-                        <DetailRow label="Total Expense / 总支出" value={formatCurrency(currentReport.totalExpense)} tone="error" />
-                        <DetailRow label="Net Sales / 净额" value={formatCurrency(currentReport.profit)} tone={currentReport.profit >= 0 ? 'success' : 'error'} />
+                        <DetailRow label={t.stats.totalExpenseLabel} value={formatCurrency(currentReport.totalExpense)} tone="error" />
+                        <DetailRow label={t.stats.netSales} value={formatCurrency(currentReport.profit)} tone={currentReport.profit >= 0 ? 'success' : 'error'} />
                         <Divider />
-                        <DetailRow label="Average Sales / 日均销售额" value={formatCurrency(averageSales)} />
-                        <DetailRow label="Average Net / 日均净额" value={formatCurrency(averageNet)} />
+                        <DetailRow label={t.stats.averageSales} value={formatCurrency(averageSales)} />
+                        <DetailRow label={t.stats.averageNet} value={formatCurrency(averageNet)} />
                     </Stack>
                 </Box>
 
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, flexWrap: 'wrap' }}>
                     <Chip
                         size="small"
-                        label={`收入 ${currentReport.incomeCount} 笔`}
+                        label={`${t.stats.incomeCount} ${currentReport.incomeCount}`}
                         color="success"
                         variant="outlined"
                     />
                     <Chip
                         size="small"
-                        label={`支出 ${currentReport.expenseCount} 笔`}
+                        label={`${t.stats.expenseCount} ${currentReport.expenseCount}`}
                         color="error"
                         variant="outlined"
                     />

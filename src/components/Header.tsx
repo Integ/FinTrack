@@ -1,16 +1,18 @@
 import React, { useRef } from 'react';
-import { AppBar, Toolbar, Typography, IconButton, Box, Tooltip, Button } from '@mui/material';
+import { AppBar, Toolbar, Typography, IconButton, Box, Tooltip, Button, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { FileUpload as FileUploadIcon, FileDownload as FileDownloadIcon } from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store';
 import { Transaction } from '../types/transaction';
 import { addTransaction } from '../store/transactionSlice';
+import { useLanguage } from '../i18n/LanguageContext';
 
 
 const Header: React.FC = () => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const dispatch = useDispatch();
     const transactions = useSelector((state: RootState) => state.transactions.transactions);
+    const { language, setLanguage, t } = useLanguage();
 
     const handleExport = () => {
         // 将交易数据转换为CSV格式
@@ -141,13 +143,40 @@ const Header: React.FC = () => {
                             FinTrack
                         </Typography>
                         <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                            副业收入记录
+                            {t.header.subtitle}
                         </Typography>
                     </Box>
                 </Box>
                 
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Tooltip title="导入数据">
+                    <ToggleButtonGroup
+                        value={language}
+                        exclusive
+                        onChange={(_, value) => value && setLanguage(value)}
+                        size="small"
+                        sx={{
+                            '& .MuiToggleButton-root': {
+                                px: 1.5,
+                                py: 0.25,
+                                fontSize: '0.75rem',
+                                fontWeight: 600,
+                                borderColor: 'rgba(148, 163, 184, 0.2)',
+                                color: 'text.secondary',
+                                '&.Mui-selected': {
+                                    backgroundColor: 'primary.main',
+                                    color: 'white',
+                                    '&:hover': {
+                                        backgroundColor: 'primary.dark',
+                                    },
+                                },
+                            },
+                        }}
+                    >
+                        <ToggleButton value="zh">中</ToggleButton>
+                        <ToggleButton value="en">EN</ToggleButton>
+                    </ToggleButtonGroup>
+                    
+                    <Tooltip title={language === 'zh' ? '导入数据' : 'Import data'}>
                         <Button
                             size="small"
                             variant="outlined"
@@ -160,11 +189,11 @@ const Header: React.FC = () => {
                                 display: { xs: 'none', sm: 'inline-flex' },
                             }}
                         >
-                            导入
+                            {t.header.import}
                         </Button>
                     </Tooltip>
                     
-                    <Tooltip title="导出数据">
+                    <Tooltip title={language === 'zh' ? '导出数据' : 'Export data'}>
                         <Button
                             size="small"
                             variant="contained"
@@ -174,11 +203,11 @@ const Header: React.FC = () => {
                                 display: { xs: 'none', sm: 'inline-flex' },
                             }}
                         >
-                            导出
+                            {t.header.export}
                         </Button>
                     </Tooltip>
 
-                    <Tooltip title="导入数据">
+                    <Tooltip title={language === 'zh' ? '导入数据' : 'Import data'}>
                         <IconButton
                             size="small"
                             onClick={() => fileInputRef.current?.click()}
@@ -187,7 +216,7 @@ const Header: React.FC = () => {
                             <FileUploadIcon fontSize="small" />
                         </IconButton>
                     </Tooltip>
-                    <Tooltip title="导出数据">
+                    <Tooltip title={language === 'zh' ? '导出数据' : 'Export data'}>
                         <IconButton
                             size="small"
                             onClick={handleExport}
