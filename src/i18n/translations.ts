@@ -114,7 +114,8 @@ export const translations: Record<Language, Translations> = {
         },
         list: {
             title: '交易记录',
-            totalRecords: '共 {total} 笔，当前显示 {showing} 笔',
+            totalRecords: '共 {total} 笔',
+            showingRecords: '当前显示 {showing} 笔',
             filterAll: '全部',
             filterIncome: '收入',
             filterExpense: '支出',
@@ -192,7 +193,8 @@ export const translations: Record<Language, Translations> = {
         },
         list: {
             title: 'Transactions',
-            totalRecords: '{total} total, showing {showing}',
+            totalRecords: '{total} total',
+            showingRecords: 'Showing {showing}',
             filterAll: 'All',
             filterIncome: 'Income',
             filterExpense: 'Expense',
