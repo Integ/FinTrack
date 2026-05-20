@@ -74,23 +74,24 @@ const TransactionList: React.FC = () => {
         return (
             <Box
                 sx={{
-                    p: { xs: 1.5, sm: 2 },
+                    p: { xs: 1.25, sm: 2 },
                     border: '1px solid',
                     borderColor: 'divider',
-                    borderRadius: 2,
-                    mb: 1.5,
+                    borderRadius: { xs: 1.5, sm: 2 },
+                    mb: { xs: 1, sm: 1.5 },
                     transition: 'all 0.2s ease-in-out',
                     '&:hover': {
                         borderColor: 'primary.main',
-                        transform: 'translateX(4px)',
+                        transform: { xs: 'none', sm: 'translateX(4px)' },
                     },
                 }}
             >
-                <Grid container spacing={1.5} alignItems="center">
+                <Grid container spacing={{ xs: 1, sm: 1.5 }} alignItems="center">
                     <Grid item>
                         <Box
                             sx={{
-                                p: 0.75,
+                                width: { xs: 32, sm: 36 },
+                                height: { xs: 32, sm: 36 },
                                 borderRadius: 1,
                                 backgroundColor: isIncome ? 'success.main' : 'error.main',
                                 color: 'background.paper',
@@ -104,7 +105,15 @@ const TransactionList: React.FC = () => {
                     </Grid>
                     
                     <Grid item xs>
-                        <Typography variant="body1" sx={{ fontWeight: 500, fontSize: { xs: '0.9rem', sm: '1rem' } }}>
+                        <Typography
+                            variant="body1"
+                            sx={{
+                                fontWeight: 600,
+                                fontSize: { xs: '0.875rem', sm: '1rem' },
+                                lineHeight: 1.25,
+                                overflowWrap: 'anywhere',
+                            }}
+                        >
                             {transaction.description}
                         </Typography>
                         <Box sx={{ display: 'flex', gap: 0.5, mt: 0.5, alignItems: 'center', flexWrap: 'wrap' }}>
@@ -125,23 +134,28 @@ const TransactionList: React.FC = () => {
                         </Box>
                     </Grid>
                     
-                    <Grid item xs={3} sx={{ textAlign: 'right' }}>
+                    <Grid item xs={4} sm={3} sx={{ textAlign: 'right', minWidth: 0 }}>
                         <Typography
                             variant="body1"
                             color={isIncome ? 'success.main' : 'error.main'}
-                            sx={{ fontWeight: 600, fontSize: { xs: '0.95rem', sm: '1.25rem' } }}
+                            sx={{
+                                fontWeight: 700,
+                                fontSize: { xs: '0.9rem', sm: '1.25rem' },
+                                lineHeight: 1.2,
+                                overflowWrap: 'anywhere',
+                            }}
                         >
                             {isIncome ? '+' : '-'}${transaction.amount.toFixed(2)}
                         </Typography>
                     </Grid>
                     
                     <Grid item>
-                        <Box sx={{ display: 'flex', gap: 0.25 }}>
+                        <Box sx={{ display: 'flex', gap: { xs: 0, sm: 0.25 } }}>
                             <Tooltip title={t.list.edit}>
                                 <IconButton
                                     size="small"
                                     onClick={() => handleEdit(transaction)}
-                                    sx={{ color: 'text.secondary', p: 0.5 }}
+                                    sx={{ color: 'text.secondary', p: { xs: 0.25, sm: 0.5 } }}
                                 >
                                     <EditIcon fontSize="small" />
                                 </IconButton>
@@ -150,7 +164,7 @@ const TransactionList: React.FC = () => {
                                 <IconButton
                                     size="small"
                                     onClick={() => handleDelete(transaction.id)}
-                                    sx={{ color: 'text.secondary', p: 0.5 }}
+                                    sx={{ color: 'text.secondary', p: { xs: 0.25, sm: 0.5 } }}
                                 >
                                     <DeleteIcon fontSize="small" />
                                 </IconButton>
@@ -164,15 +178,15 @@ const TransactionList: React.FC = () => {
 
     return (
         <Paper sx={{ mt: { xs: 1, sm: 2 }, p: 0, overflow: 'hidden' }}>
-            <Box sx={{ p: { xs: 2, sm: 3 }, borderBottom: '1px solid', borderColor: 'divider' }}>
-                <Typography variant="h5" sx={{ fontWeight: 600 }}>
+            <Box sx={{ p: { xs: 1.5, sm: 3 }, borderBottom: '1px solid', borderColor: 'divider' }}>
+                <Typography variant="h5" sx={{ fontWeight: 600, fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
                     {t.list.title}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
                     {t.list.totalRecords.replace('{total}', String(transactions.length)).replace('{showing}', String(filteredTransactions.length))}
                 </Typography>
 
-                <Box sx={{ mt: 2, display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
+                <Box sx={{ mt: 1.5, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                     <ToggleButtonGroup
                         color="primary"
                         size="small"
@@ -180,6 +194,14 @@ const TransactionList: React.FC = () => {
                         exclusive
                         onChange={(_, value: FilterType | null) => {
                             if (value) setFilterType(value);
+                        }}
+                        sx={{
+                            width: { xs: '100%', sm: 'auto' },
+                            '& .MuiToggleButton-root': {
+                                flex: { xs: 1, sm: 'initial' },
+                                minHeight: 40,
+                                px: { xs: 1, sm: 1.5 },
+                            },
                         }}
                     >
                         <ToggleButton value="all">{t.list.filterAll}</ToggleButton>
@@ -204,7 +226,7 @@ const TransactionList: React.FC = () => {
                 </Box>
             </Box>
             
-            <Box sx={{ p: { xs: 1.5, sm: 3 }, maxHeight: { xs: '50vh', sm: 600 }, overflowY: 'auto' }}>
+            <Box sx={{ p: { xs: 1, sm: 3 }, maxHeight: { xs: 'none', sm: 600 }, overflowY: { xs: 'visible', sm: 'auto' } }}>
                 {filteredTransactions.length === 0 ? (
                     <Box sx={{ textAlign: 'center', py: 8 }}>
                         <Typography variant="body1" color="text.secondary">

@@ -13,6 +13,8 @@ import {
     Box,
     Typography,
     Grid,
+    useMediaQuery,
+    useTheme,
 } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { addTransaction, updateTransaction } from '../store/transactionSlice';
@@ -29,6 +31,8 @@ interface TransactionFormProps {
 const TransactionForm: React.FC<TransactionFormProps> = ({ open, onClose, editingTransaction }) => {
     const dispatch = useDispatch();
     const { t } = useLanguage();
+    const theme = useTheme();
+    const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
     // Keep amount as string in the form state so we can represent an empty field.
     const [transaction, setTransaction] = useState<{
         date: string;
@@ -89,18 +93,23 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ open, onClose, editin
             onClose={onClose}
             maxWidth="sm"
             fullWidth
+            fullScreen={fullScreen}
             PaperProps={{
-                sx: { borderRadius: 3 }
+                sx: {
+                    borderRadius: { xs: 0, sm: 3 },
+                    m: { xs: 0, sm: 2 },
+                    maxHeight: { xs: '100dvh', sm: 'calc(100% - 64px)' },
+                }
             }}
         >
-            <DialogTitle sx={{ pb: 1 }}>
-                <Typography variant="h4" component="div" sx={{ fontWeight: 600 }}>
+            <DialogTitle sx={{ px: { xs: 2, sm: 3 }, pt: { xs: 'calc(18px + env(safe-area-inset-top))', sm: 3 }, pb: 1 }}>
+                <Typography variant="h4" component="div" sx={{ fontWeight: 600, fontSize: { xs: '1.25rem', sm: '1.5rem' } }}>
                     {editingTransaction ? t.form.editTransaction : t.form.newTransaction}
                 </Typography>
             </DialogTitle>
             
-            <DialogContent sx={{ pt: 1 }}>
-                <Grid container spacing={3}>
+            <DialogContent sx={{ px: { xs: 2, sm: 3 }, pt: 1, pb: { xs: 2, sm: 3 } }}>
+                <Grid container spacing={{ xs: 2, sm: 3 }}>
                     <Grid item xs={12}>
                         <TextField
                             label={t.form.date}
@@ -111,6 +120,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ open, onClose, editin
                                 setTransaction({ ...transaction, date: e.target.value })
                             }
                             InputLabelProps={{ shrink: true }}
+                            inputProps={{ inputMode: 'numeric' }}
                             variant="outlined"
                         />
                     </Grid>
@@ -157,6 +167,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ open, onClose, editin
                                 })
                             }
                             variant="outlined"
+                            inputProps={{
+                                inputMode: 'decimal',
+                                min: 0,
+                            }}
                             InputProps={{
                                 startAdornment: (
                                     <Typography sx={{ mr: 1, color: 'text.secondary' }}>$</Typography>
@@ -180,6 +194,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ open, onClose, editin
                                 }
                                 variant="outlined"
                                 helperText={t.form.costHelper}
+                                inputProps={{
+                                    inputMode: 'decimal',
+                                    min: 0,
+                                }}
                                 InputProps={{
                                     startAdornment: (
                                         <Typography sx={{ mr: 1, color: 'text.secondary' }}>$</Typography>
@@ -199,6 +217,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ open, onClose, editin
                             }
                             variant="outlined"
                             placeholder={t.form.categoryPlaceholder}
+                            inputProps={{ autoComplete: 'off' }}
                         />
                     </Grid>
                     
@@ -217,15 +236,24 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ open, onClose, editin
                             }
                             variant="outlined"
                             placeholder={t.form.descriptionPlaceholder}
+                            inputProps={{ autoComplete: 'off' }}
                         />
                     </Grid>
                 </Grid>
             </DialogContent>
             
-            <DialogActions sx={{ p: 3, pt: 0 }}>
+            <DialogActions
+                sx={{
+                    p: { xs: 2, sm: 3 },
+                    pt: { xs: 1, sm: 0 },
+                    pb: { xs: 'calc(16px + env(safe-area-inset-bottom))', sm: 3 },
+                    gap: 1,
+                }}
+            >
                 <Button 
                     onClick={onClose}
                     size="large"
+                    fullWidth={fullScreen}
                     sx={{ borderRadius: 2 }}
                 >
                     {t.form.cancel}
@@ -235,6 +263,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ open, onClose, editin
                     variant="contained" 
                     color="primary"
                     size="large"
+                    fullWidth={fullScreen}
                     sx={{ borderRadius: 2, px: 3 }}
                     disabled={!transaction.amount || !transaction.category}
                 >

@@ -127,28 +127,53 @@ const Header: React.FC = () => {
     };
 
     return (
-        <AppBar position="static" sx={{ height: { xs: 72, sm: 78 } }}>
-            <Toolbar sx={{ height: { xs: 72, sm: 78 }, minHeight: 'auto !important' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
-                    <Box>
+        <AppBar
+            position="sticky"
+            sx={{
+                minHeight: { xs: 64, sm: 78 },
+                top: 0,
+                zIndex: (theme) => theme.zIndex.appBar,
+                backdropFilter: 'blur(16px)',
+                backgroundColor: 'rgba(30, 41, 59, 0.92)',
+            }}
+        >
+            <Toolbar
+                sx={{
+                    minHeight: { xs: '64px !important', sm: '78px !important' },
+                    px: { xs: 1.5, sm: 3 },
+                    gap: 1,
+                }}
+            >
+                <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, minWidth: 0 }}>
+                    <Box sx={{ minWidth: 0 }}>
                         <Typography
                             variant="h6"
                             component="div"
                             sx={{
                                 fontWeight: 700,
-                                fontSize: '1.125rem',
-                                letterSpacing: '-0.025em'
+                                fontSize: { xs: '1rem', sm: '1.125rem' },
+                                lineHeight: 1.15,
                             }}
                         >
                             FinTrack
                         </Typography>
-                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                        <Typography
+                            variant="caption"
+                            sx={{
+                                color: 'text.secondary',
+                                display: 'block',
+                                maxWidth: { xs: 140, sm: 'none' },
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                            }}
+                        >
                             {t.header.subtitle}
                         </Typography>
                     </Box>
                 </Box>
                 
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.25, sm: 1 }, flexShrink: 0 }}>
                     <ToggleButtonGroup
                         value={language}
                         exclusive
@@ -156,7 +181,9 @@ const Header: React.FC = () => {
                         size="small"
                         sx={{
                             '& .MuiToggleButton-root': {
-                                px: 1.5,
+                                minWidth: { xs: 36, sm: 42 },
+                                minHeight: { xs: 36, sm: 34 },
+                                px: { xs: 0.75, sm: 1.5 },
                                 py: 0.25,
                                 fontSize: '0.75rem',
                                 fontWeight: 600,

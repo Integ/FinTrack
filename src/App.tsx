@@ -54,6 +54,13 @@ const theme = createTheme({
         },
     },
     components: {
+        MuiCssBaseline: {
+            styleOverrides: {
+                body: {
+                    backgroundColor: '#0F172A',
+                },
+            },
+        },
         MuiPaper: {
             styleOverrides: {
                 root: {
@@ -84,6 +91,27 @@ const theme = createTheme({
                     '& .MuiOutlinedInput-root': {
                         borderRadius: 10,
                     },
+                    '& input, & textarea': {
+                        fontSize: 16,
+                    },
+                },
+            },
+        },
+        MuiInputBase: {
+            styleOverrides: {
+                root: {
+                    minHeight: 48,
+                },
+                input: {
+                    fontSize: 16,
+                },
+            },
+        },
+        MuiSelect: {
+            styleOverrides: {
+                select: {
+                    minHeight: '1.4375em',
+                    fontSize: 16,
                 },
             },
         },
@@ -103,6 +131,7 @@ const theme = createTheme({
                     textTransform: 'none',
                     borderRadius: 8,
                     fontWeight: 500,
+                    minHeight: 44,
                 },
                 containedPrimary: {
                     background: '#2563EB',
@@ -116,7 +145,17 @@ const theme = createTheme({
             styleOverrides: {
                 root: {
                     borderRadius: 12,
+                    width: 56,
+                    height: 56,
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                },
+            },
+        },
+        MuiIconButton: {
+            styleOverrides: {
+                root: {
+                    minWidth: 44,
+                    minHeight: 44,
                 },
             },
         },
@@ -135,7 +174,10 @@ const App: React.FC = () => {
                         flexDirection: 'column',
                         minHeight: '100vh',
                         background:
-                            'radial-gradient(circle at top right, rgba(37, 99, 235, 0.2), transparent 40%), #0F172A',
+                            'linear-gradient(180deg, rgba(37, 99, 235, 0.12), rgba(15, 23, 42, 0) 220px), #0F172A',
+                        '@supports (height: 100dvh)': {
+                            minHeight: '100dvh',
+                        },
                     }}
                     >
                         <Dashboard />

@@ -53,7 +53,8 @@ const TransactionSummary: React.FC = () => {
     }> = ({ title, value, color, icon, trend }) => (
         <Paper
             sx={{
-                p: { xs: 2, sm: 3 },
+                p: { xs: 1.5, sm: 3 },
+                minHeight: { xs: 126, sm: 154 },
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
@@ -68,7 +69,7 @@ const TransactionSummary: React.FC = () => {
         >
             <Box sx={{ display: 'flex', alignItems: 'center', mb: { xs: 1, sm: 2 } }}>
                 <Box sx={{ 
-                    p: 0.75, 
+                    p: { xs: 0.6, sm: 0.75 },
                     borderRadius: 1, 
                     backgroundColor: `${color}15`,
                     color: color,
@@ -79,7 +80,7 @@ const TransactionSummary: React.FC = () => {
                 }}>
                     {icon}
                 </Box>
-                <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' }, lineHeight: 1.2 }}>
                     {title}
                 </Typography>
             </Box>
@@ -90,7 +91,9 @@ const TransactionSummary: React.FC = () => {
                     fontWeight: 600,
                     color: color,
                     mb: trend !== undefined ? 0.5 : 0,
-                    fontSize: { xs: '1.25rem', sm: '1.5rem' }
+                    fontSize: { xs: '1.1rem', sm: '1.5rem' },
+                    lineHeight: 1.2,
+                    overflowWrap: 'anywhere',
                 }}
             >
                 ${value.toFixed(2)}
@@ -112,13 +115,13 @@ const TransactionSummary: React.FC = () => {
     );
 
     return (
-        <Box sx={{ mb: { xs: 2, sm: 4 } }}>
-            <Typography variant="h5" sx={{ mb: { xs: 2, sm: 3 }, fontWeight: 600 }}>
+        <Box sx={{ mb: { xs: 1.5, sm: 4 } }}>
+            <Typography variant="h5" sx={{ mb: { xs: 1.25, sm: 3 }, fontWeight: 600, fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
                 {t.summary.title}
             </Typography>
             
-            <Grid container spacing={1.5}>
-                <Grid item xs={12} sm={6} md={3}>
+            <Grid container spacing={{ xs: 1, sm: 1.5 }}>
+                <Grid item xs={6} sm={6} md={3}>
                     <SummaryCard
                         title={t.summary.totalIncome}
                         value={summary.totalIncome}
@@ -126,7 +129,7 @@ const TransactionSummary: React.FC = () => {
                         icon={<TrendingUpIcon />}
                     />
                 </Grid>
-                <Grid item xs={12} sm={6} md={3}>
+                <Grid item xs={6} sm={6} md={3}>
                     <SummaryCard
                         title={t.summary.netProfit}
                         value={summary.profit}
@@ -134,7 +137,7 @@ const TransactionSummary: React.FC = () => {
                         icon={summary.profit >= 0 ? <TrendingUpIcon /> : <TrendingDownIcon />}
                     />
                 </Grid>
-                <Grid item xs={12} sm={6} md={3}>
+                <Grid item xs={6} sm={6} md={3}>
                     <SummaryCard
                         title={t.summary.totalCosts}
                         value={summary.costs}
@@ -142,7 +145,7 @@ const TransactionSummary: React.FC = () => {
                         icon={<TargetIcon />}
                     />
                 </Grid>
-                <Grid item xs={12} sm={6} md={3}>
+                <Grid item xs={6} sm={6} md={3}>
                     <SummaryCard
                         title={t.summary.totalExpense}
                         value={summary.totalExpense}

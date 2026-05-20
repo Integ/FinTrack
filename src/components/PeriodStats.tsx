@@ -159,10 +159,11 @@ const PeriodStats: React.FC = () => {
         color: string;
         helper?: string;
     }> = ({ label, value, icon, color, helper }) => (
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={6} sm={6}>
             <Box
                 sx={{
-                    p: 1.5,
+                    p: { xs: 1.25, sm: 1.5 },
+                    minHeight: { xs: 126, sm: 'auto' },
                     height: '100%',
                     border: '1px solid',
                     borderColor: 'divider',
@@ -185,7 +186,7 @@ const PeriodStats: React.FC = () => {
                     >
                         {icon}
                     </Box>
-                    <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600, lineHeight: 1.2 }}>
                         {label}
                     </Typography>
                 </Stack>
@@ -196,6 +197,7 @@ const PeriodStats: React.FC = () => {
                         color,
                         overflowWrap: 'anywhere',
                         lineHeight: 1.2,
+                        fontSize: { xs: '1rem', sm: '1rem' },
                     }}
                 >
                     {value}
@@ -234,13 +236,13 @@ const PeriodStats: React.FC = () => {
 
     return (
         <Paper sx={{ mt: { xs: 1, sm: 2 }, overflow: 'hidden' }}>
-            <Box sx={{ p: { xs: 2, sm: 3 }, borderBottom: '1px solid', borderColor: 'divider' }}>
-                <Typography variant="h5" sx={{ fontWeight: 600, mb: 0.8 }}>
+            <Box sx={{ p: { xs: 1.5, sm: 3 }, borderBottom: '1px solid', borderColor: 'divider' }}>
+                <Typography variant="h5" sx={{ fontWeight: 600, mb: 0.8, fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
                     {t.stats.title}
                 </Typography>
                 <Stack direction="row" spacing={1} alignItems="center" sx={{ color: 'text.secondary' }}>
                     {currentConfig.icon}
-                    <Typography variant="body2">{currentConfig.subtitle}</Typography>
+                    <Typography variant="body2" sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>{currentConfig.subtitle}</Typography>
                 </Stack>
             </Box>
 
@@ -256,8 +258,11 @@ const PeriodStats: React.FC = () => {
                     borderColor: 'divider',
                     '& .MuiTab-root': {
                         minHeight: 44,
+                        minWidth: { xs: 'auto', sm: 90 },
+                        px: { xs: 1.25, sm: 2 },
                         textTransform: 'none',
                         fontWeight: 600,
+                        fontSize: { xs: '0.78rem', sm: '0.875rem' },
                     },
                 }}
             >
@@ -272,8 +277,8 @@ const PeriodStats: React.FC = () => {
                 ))}
             </Tabs>
 
-            <Box sx={{ p: { xs: 2, sm: 3 }, display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <Grid container spacing={1.5}>
+            <Box sx={{ p: { xs: 1.5, sm: 3 }, display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 } }}>
+                <Grid container spacing={{ xs: 1, sm: 1.5 }}>
                     <SummaryTile
                         label={t.stats.totalSales}
                         value={formatCurrency(currentReport.income)}
@@ -306,14 +311,14 @@ const PeriodStats: React.FC = () => {
 
                 <Box
                     sx={{
-                        p: 1.5,
+                        p: { xs: 1.25, sm: 1.5 },
                         border: '1px solid',
                         borderColor: 'divider',
                         borderRadius: 1,
                         backgroundColor: 'rgba(46, 125, 50, 0.06)',
                     }}
                 >
-                    <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.2 }}>
+                    <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.2, flexWrap: 'wrap' }}>
                         <ReceiptLongIcon sx={{ fontSize: 18, color: 'primary.main' }} />
                         <Typography variant="body2" sx={{ fontWeight: 700 }}>
                             {t.stats.reportDetail}

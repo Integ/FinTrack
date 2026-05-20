@@ -16,10 +16,10 @@ const Dashboard: React.FC = () => {
             <Container 
                 maxWidth="lg" 
                 sx={{ 
-                    mt: { xs: 2, sm: 4 }, 
-                    mb: { xs: 6, sm: 8 }, 
+                    mt: { xs: 1.5, sm: 4 },
+                    mb: { xs: 'calc(88px + env(safe-area-inset-bottom))', sm: 8 },
                     flex: 1,
-                    px: { xs: 2, sm: 3 }
+                    px: { xs: 1.5, sm: 3 },
                 }}
             >
                 <TransactionSummary />
@@ -37,8 +37,8 @@ const Dashboard: React.FC = () => {
                     aria-label="add"
                     sx={{ 
                         position: 'fixed', 
-                        bottom: { xs: 16, sm: 24 }, 
-                        right: { xs: 16, sm: 24 },
+                        bottom: { xs: 'calc(18px + env(safe-area-inset-bottom))', sm: 24 },
+                        right: { xs: 18, sm: 24 },
                         zIndex: 1000,
                     }}
                     onClick={() => setIsFormOpen(true)}
