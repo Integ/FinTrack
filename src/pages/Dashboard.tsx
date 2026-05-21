@@ -24,11 +24,11 @@ const Dashboard: React.FC = () => {
             >
                 <TransactionSummary />
                 <Box sx={{ display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: { xs: 2, sm: 3 } }}>
-                    <Box sx={{ flex: 1, minWidth: 0, width: { xs: '100%', lg: 'auto' } }}>
-                        <TransactionList />
-                    </Box>
                     <Box sx={{ width: { xs: '100%', lg: '400px' }, flexShrink: 0 }}>
                         <PeriodStats />
+                    </Box>
+                    <Box sx={{ flex: 1, minWidth: 0, width: { xs: '100%', lg: 'auto' } }}>
+                        <TransactionList />
                     </Box>
                 </Box>
                 
