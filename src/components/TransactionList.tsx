@@ -11,6 +11,7 @@ import {
     ToggleButton,
     TextField,
     InputAdornment,
+    Pagination,
 } from '@mui/material';
 import {
     Delete as DeleteIcon,
@@ -27,6 +28,7 @@ import TransactionForm from './TransactionForm';
 import { useLanguage } from '../i18n/LanguageContext';
 
 type FilterType = 'all' | 'income' | 'expense';
+const PAGE_SIZE = 10;
 
 const TransactionList: React.FC = () => {
     const dispatch = useDispatch();
@@ -37,6 +39,7 @@ const TransactionList: React.FC = () => {
     const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
     const [filterType, setFilterType] = useState<FilterType>('all');
     const [keyword, setKeyword] = useState('');
+    const [page, setPage] = useState(1);
 
     const handleDelete = (id: string) => {
         dispatch(deleteTransaction(id));
@@ -67,6 +70,23 @@ const TransactionList: React.FC = () => {
             })
             .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     }, [transactions, filterType, keyword]);
+
+    const pageCount = Math.ceil(filteredTransactions.length / PAGE_SIZE);
+    const currentPage = pageCount === 0 ? 1 : Math.min(page, pageCount);
+    const pageStart = (currentPage - 1) * PAGE_SIZE;
+    const paginatedTransactions = filteredTransactions.slice(pageStart, pageStart + PAGE_SIZE);
+    const showingStart = filteredTransactions.length === 0 ? 0 : pageStart + 1;
+    const showingEnd = pageStart + paginatedTransactions.length;
+
+    React.useEffect(() => {
+        setPage(1);
+    }, [filterType, keyword]);
+
+    React.useEffect(() => {
+        if (pageCount > 0 && page > pageCount) {
+            setPage(pageCount);
+        }
+    }, [page, pageCount]);
 
     const TransactionItem: React.FC<{ transaction: Transaction }> = ({ transaction }) => {
         const isIncome = transaction.type === 'income';
@@ -237,11 +257,49 @@ const TransactionList: React.FC = () => {
                         </Typography>
                     </Box>
                 ) : (
-                    filteredTransactions.map((transaction) => (
+                    paginatedTransactions.map((transaction) => (
                         <TransactionItem key={transaction.id} transaction={transaction} />
                     ))
                 )}
             </Box>
+
+            {filteredTransactions.length > PAGE_SIZE && (
+                <Box
+                    sx={{
+                        px: { xs: 1.5, sm: 3 },
+                        py: 2,
+                        borderTop: '1px solid',
+                        borderColor: 'divider',
+                        display: 'flex',
+                        alignItems: { xs: 'stretch', sm: 'center' },
+                        justifyContent: 'space-between',
+                        gap: 1.5,
+                        flexDirection: { xs: 'column', sm: 'row' },
+                    }}
+                >
+                    <Typography variant="body2" color="text.secondary">
+                        {t.list.pageRange
+                            .replace('{start}', String(showingStart))
+                            .replace('{end}', String(showingEnd))
+                            .replace('{total}', String(filteredTransactions.length))}
+                    </Typography>
+                    <Pagination
+                        count={pageCount}
+                        page={currentPage}
+                        onChange={(_, value) => setPage(value)}
+                        color="primary"
+                        size="small"
+                        siblingCount={0}
+                        boundaryCount={1}
+                        sx={{
+                            alignSelf: { xs: 'center', sm: 'auto' },
+                            '& .MuiPagination-ul': {
+                                flexWrap: 'nowrap',
+                            },
+                        }}
+                    />
+                </Box>
+            )}
 
             {editingTransaction && (
                 <TransactionForm

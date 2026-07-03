@@ -39,6 +39,7 @@ export interface Translations {
         filterIncome: string;
         filterExpense: string;
         searchPlaceholder: string;
+        pageRange: string;
         noRecords: string;
         noRecordsHint: string;
         cost: string;
@@ -120,6 +121,7 @@ export const translations: Record<Language, Translations> = {
             filterIncome: '收入',
             filterExpense: '支出',
             searchPlaceholder: '搜索描述/类别',
+            pageRange: '显示第 {start}-{end} 笔，共 {total} 笔',
             noRecords: '没有匹配的记录',
             noRecordsHint: '可以调整筛选条件，或点击右下角按钮新增交易',
             cost: '成本:',
@@ -199,6 +201,7 @@ export const translations: Record<Language, Translations> = {
             filterIncome: 'Income',
             filterExpense: 'Expense',
             searchPlaceholder: 'Search description/category',
+            pageRange: 'Showing {start}-{end} of {total}',
             noRecords: 'No matching records',
             noRecordsHint: 'Adjust filters or click the button below to add a new transaction',
             cost: 'Cost:',
