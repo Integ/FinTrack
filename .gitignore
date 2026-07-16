@@ -60,4 +60,7 @@ out/
 *.pid.lock
 .npm
 .eslintcache
-.yarn-integrity 
+.yarn-integrity
+
+# 本地 iOS App（不提交到此 Web 仓库）
+/FinTrackiOS/
