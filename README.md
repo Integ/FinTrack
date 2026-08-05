@@ -22,6 +22,11 @@
 
 ## 🚀 快速开始
 
+### 原生移动端
+
+- iOS：打开 `FinTrackiOS/FinTrack.xcodeproj`，详见 `FinTrackiOS/README.md`
+- Android：用 Android Studio 打开 `FinTrackAndroid`，详见 `FinTrackAndroid/README.md`
+
 ### 环境要求
 
 - Node.js 16+ 
@@ -81,6 +86,8 @@ npm start
 
 ```
 FinTrack/
+├── FinTrackiOS/      # SwiftUI 原生 iOS App
+├── FinTrackAndroid/  # Kotlin + Compose 原生 Android App
 ├── public/           # 静态资源
 │   ├── index.html    # HTML模板
 │   └── manifest.json # PWA配置
