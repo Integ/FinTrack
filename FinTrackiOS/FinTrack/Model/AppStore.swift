@@ -9,10 +9,25 @@ final class AppStore {
     private(set) var saveError: String?
     @ObservationIgnored private let fileURL: URL?
 
-    init(fileURL: URL? = AppStore.defaultFileURL, initial: AppData? = nil) {
+    init(
+        fileURL: URL? = AppStore.defaultFileURL,
+        initial: AppData? = nil,
+        legacyURL: URL? = LegacyMigration.defaultURL,
+        legacyDefaults: UserDefaults? = .standard
+    ) {
         self.fileURL = fileURL
+        let hasSavedData = fileURL.map { FileManager.default.fileExists(atPath: $0.path) } ?? false
         if let initial {
             data = initial
+        } else if !hasSavedData, let legacyURL, FileManager.default.fileExists(atPath: legacyURL.path) {
+            // First launch after replacing the old app: bring its records over once.
+            do {
+                data = try LegacyMigration.load(from: legacyURL, defaults: legacyDefaults) ?? AppData()
+                persist()
+            } catch {
+                data = AppData()
+                saveError = "旧版数据无法自动迁移（\(error.localizedDescription)），请用旧版导出的 CSV 导入。"
+            }
         } else if let fileURL, let stored = try? Data(contentsOf: fileURL) {
             do {
                 data = try AppStore.decoder.decode(AppData.self, from: stored)

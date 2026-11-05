@@ -254,9 +254,65 @@ final class AppStoreTests: XCTestCase {
     func testPersistsToDisk() throws {
         let url = FileManager.default.temporaryDirectory.appendingPathComponent("fintrack-test-\(UUID()).json")
         defer { try? FileManager.default.removeItem(at: url) }
-        let store = AppStore(fileURL: url)
+        let store = AppStore(fileURL: url, legacyURL: nil)
         store.addItems([Item(name: "iPod", category: "手机平板", source: "", purchaseDay: .today, cost: 3)])
-        let reloaded = AppStore(fileURL: url)
+        let reloaded = AppStore(fileURL: url, legacyURL: nil)
         XCTAssertEqual(reloaded.data.items.map(\.name), ["iPod"])
+    }
+}
+
+@MainActor
+final class LegacyMigrationTests: XCTestCase {
+    func testMigratesOldAppDataOnceAndKeepsOriginal() throws {
+        let folder = FileManager.default.temporaryDirectory.appendingPathComponent("legacy-\(UUID())")
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let legacy = folder.appendingPathComponent("transactions.json")
+        let json = """
+        [
+          {"category":"Transportation","type":"expense","amount":6,"date":"2026-11-04T19:42:28Z","cost":0,"note":"daypass","id":"D38C695C-6261-4206-BB65-A568B5AA5E27"},
+          {"category":"Marketplace","type":"income","amount":200,"date":"2026-11-04T18:10:41Z","cost":100,"note":"罗技G25","id":"1B3AB142-2DF8-4FE4-83BB-6F6ABDC1395C"},
+          {"category":"marketplace","type":"income","amount":12.5,"date":"2025-10-24T07:00:00.000Z","cost":3,"note":"Apple 充电线","id":"not-a-uuid"}
+        ]
+        """
+        try Data(json.utf8).write(to: legacy)
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: "legacy-test-\(UUID())"))
+        defaults.set("CAD", forKey: "currencyCode")
+
+        let fileURL = folder.appendingPathComponent("fintrack.json")
+        let store = AppStore(fileURL: fileURL, legacyURL: legacy, legacyDefaults: defaults)
+        XCTAssertNil(store.saveError)
+        XCTAssertEqual(store.data.sales.count, 2)
+        XCTAssertEqual(store.data.expenses.count, 1)
+        XCTAssertEqual(store.settings.currencyCode, "CAD")
+        XCTAssertEqual(store.data.expenses.first?.id, UUID(uuidString: "D38C695C-6261-4206-BB65-A568B5AA5E27"))
+        XCTAssertEqual(store.data.expenses.first?.category, "交通")
+        let g25 = try XCTUnwrap(store.data.sales.first { $0.title == "罗技G25" })
+        XCTAssertEqual(g25.id, UUID(uuidString: "1B3AB142-2DF8-4FE4-83BB-6F6ABDC1395C"))
+        XCTAssertEqual(g25.extraCost, 100)
+        XCTAssertEqual(g25.category, "游戏")
+        let cable = try XCTUnwrap(store.data.sales.first { $0.title == "Apple 充电线" })
+        XCTAssertEqual(cable.amount, Decimal(string: "12.5"))
+        XCTAssertEqual(cable.channel, "Marketplace")
+        XCTAssertTrue(FileManager.default.fileExists(atPath: fileURL.path))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: legacy.path))
+
+        // Second launch reads the new file and does not import again.
+        store.saveExpense(Expense(day: .today, amount: 12, category: "交通"))
+        let relaunched = AppStore(fileURL: fileURL, legacyURL: legacy, legacyDefaults: defaults)
+        XCTAssertEqual(relaunched.data.expenses.count, 2)
+        XCTAssertEqual(relaunched.data.sales.count, 2)
+    }
+
+    func testUnreadableLegacyFileIsReportedNotDeleted() throws {
+        let folder = FileManager.default.temporaryDirectory.appendingPathComponent("legacy-\(UUID())")
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let legacy = folder.appendingPathComponent("transactions.json")
+        try Data("{\"unexpected\": true}".utf8).write(to: legacy)
+        let store = AppStore(fileURL: folder.appendingPathComponent("fintrack.json"), legacyURL: legacy, legacyDefaults: nil)
+        XCTAssertNotNil(store.saveError)
+        XCTAssertTrue(store.data.sales.isEmpty)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: legacy.path))
     }
 }

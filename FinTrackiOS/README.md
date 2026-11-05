@@ -38,7 +38,16 @@
 
 ## 开发
 
-用 Xcode 打开 `FinTrack.xcodeproj`，运行 `FinTrack` scheme。Bundle ID 是 `com.vicecity.fintrack.ios`，真机运行前在 Signing 里选你的 Team。
+用 Xcode 打开 `FinTrack.xcodeproj`，运行 `FinTrack` scheme。Bundle ID 是 `com.vicecity.fintrack`，签名 Team 是 Shanghai ViceCity Technology（`XVP69344DG`），会直接覆盖安装旧版 App。
+
+首次启动时，如果没有新数据文件但有旧版的 `Application Support/FinTrack/transactions.json`，会自动迁移（保留原记录 ID 和货币设置），旧文件保持不动。
+
+装到 iPhone：
+
+```bash
+xcodebuild -project FinTrack.xcodeproj -scheme FinTrack -configuration Release -destination 'id=<设备UDID>' -allowProvisioningUpdates build
+xcrun devicectl device install app --device <设备UDID> <DerivedData>/Build/Products/Release-iphoneos/FinTrack.app
+```
 
 命令行测试：
 
