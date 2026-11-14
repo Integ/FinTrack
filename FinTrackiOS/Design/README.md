@@ -1,18 +1,24 @@
 # App 图标
 
-可爱的猫头鹰：靛蓝背景（和 App 主色一致）、暖金色猫头鹰（延续旧 logo 的金色和眨眼）、抱着一枚金币（记账 / 赚钱）。
+保留靛紫底色、金色猫头鹰、眨眼和抱金币的品牌形象。新版使用连续的圆润轮廓和一体面罩，去掉脚趾、腮红、独立眼圈和地面投影，减少桌面小尺寸下的视觉噪声。
 
 | 文件 | 用途 |
 |---|---|
-| `AppIcon.svg` | 浅色图标（带背景）→ `AppIcon.png` |
-| `AppIcon-Dark.svg` | 深色模式图标（透明背景）→ `AppIcon-Dark.png`；着色模式用它的灰度版 `AppIcon-Tinted.png` |
-| `owl_icon.py` | 图标生成脚本，`CONCEPTS` 里有 A–D 四个方案，App 用的是 D |
-| `render_svg.swift` | 用 macOS 自带的 CoreSVG 把 SVG 渲染成 PNG |
+| `AppIcon.svg` | 默认外观，柔和靛紫渐变背景 |
+| `AppIcon-Dark.svg` | 深色外观，深靛蓝背景 |
+| `AppIcon-Tinted.svg` | 着色外观，透明背景的专用灰度图形 |
+| `AppIcon-Preview.png` | 三种外观及 60 / 40 / 29 px 尺寸预览；圆角仅用于预览 |
+| `owl_icon.py` | 三种 SVG 的统一生成入口，保持几何与配色同步 |
+| `render_svg.swift` | 用 macOS CoreSVG 导出 PNG，支持去除 alpha 通道 |
+
+在本目录执行以下命令可重新生成生产素材：
 
 ```bash
-swiftc -O render_svg.swift -o /tmp/render_svg
-/tmp/render_svg AppIcon.svg ../FinTrack/Assets.xcassets/AppIcon.appiconset/AppIcon.png 1024 opaque
-/tmp/render_svg AppIcon-Dark.svg ../FinTrack/Assets.xcassets/AppIcon.appiconset/AppIcon-Dark.png 1024
+python3 owl_icon.py
+swiftc -O render_svg.swift -o /tmp/fintrack-render-svg
+/tmp/fintrack-render-svg AppIcon.svg ../FinTrack/Assets.xcassets/AppIcon.appiconset/AppIcon.png 1024 opaque
+/tmp/fintrack-render-svg AppIcon-Dark.svg ../FinTrack/Assets.xcassets/AppIcon.appiconset/AppIcon-Dark.png 1024 opaque
+/tmp/fintrack-render-svg AppIcon-Tinted.svg ../FinTrack/Assets.xcassets/AppIcon.appiconset/AppIcon-Tinted.png 1024
 ```
 
-浅色图标要加 `opaque`：App Store 不接受带透明通道的图标。
+默认和深色 PNG 为 1024 × 1024 RGB，不含 alpha；着色 PNG 为 RGBA，图形为中性灰度。生产素材保持完整正方形，由系统处理圆角。

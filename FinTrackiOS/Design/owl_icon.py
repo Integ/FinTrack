@@ -1,128 +1,74 @@
-"""Cute owl app icon generator (1024x1024 SVG).
-
-    python3 owl_icon.py <out-dir>      # writes owl_A..D.svg; the app uses concept D
-
-Render to PNG with macOS CoreSVG:
-    swiftc -O render_svg.swift -o render_svg && ./render_svg AppIcon.svg AppIcon.png 1024
-"""
+"""Generate the production owl icon SVGs. Usage: python3 owl_icon.py [out-dir]"""
+from pathlib import Path
 import sys
 
-def owl(p):
-    bg = p['bg']
-    body_light, body_mid, body_dark = p['body']
-    face = p['face']
-    ink = p['ink']
-    beak = p['beak']
-    parts = []
-    add = parts.append
-    add('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">')
-    add('<defs>')
-    if bg:
-        add(f'<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{bg[0]}"/><stop offset="1" stop-color="{bg[1]}"/></linearGradient>')
-        add('<radialGradient id="glow" cx="0.5" cy="0.45" r="0.5"><stop offset="0" stop-color="#FFFFFF" stop-opacity="%s"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></radialGradient>' % p.get('glow', 0.18))
-    add(f'<radialGradient id="body" cx="0.42" cy="0.3" r="0.8"><stop offset="0" stop-color="{body_light}"/><stop offset="0.55" stop-color="{body_mid}"/><stop offset="1" stop-color="{body_dark}"/></radialGradient>')
-    add(f'<linearGradient id="wing" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{body_mid}"/><stop offset="1" stop-color="{body_dark}"/></linearGradient>')
-    add('<radialGradient id="coin" cx="0.38" cy="0.32" r="0.8"><stop offset="0" stop-color="#FEF9C3"/><stop offset="0.45" stop-color="#FDE047"/><stop offset="1" stop-color="#EAB308"/></radialGradient>')
-    add('</defs>')
 
-    if bg:
-        add('<rect width="1024" height="1024" fill="url(#bg)"/>')
-        add('<circle cx="512" cy="470" r="470" fill="url(#glow)"/>')
-        for (x, y, r) in p.get('stars', []):
-            add(f'<circle cx="{x}" cy="{y}" r="{r}" fill="#FDE68A" opacity="0.85"/>')
-        add('<ellipse cx="512" cy="884" rx="236" ry="30" fill="#000000" opacity="0.18"/>')
+def owl(appearance='light'):
+    tinted = appearance == 'tinted'
+    dark = appearance == 'dark'
+    palette = dict(
+        top='#7770F5', bottom='#4934B4', glow='#B4ACFF',
+        gold_top='#FFE5A0', gold_bottom='#F4B544', wing='#DB952F',
+        face='#FFF8E7', ink='#30264F', beak='#E99538',
+        coin='#FFE6A0', rim='#CC8D31', symbol='#86551E',
+    )
+    if dark:
+        palette.update(top='#26223E', bottom='#121121', glow='#655789')
+    if tinted:
+        palette.update(gold_top='#F2F2F2', gold_bottom='#C9C9C9', wing='#999999',
+                       face='#FFFFFF', ink='#292929', beak='#8A8A8A',
+                       coin='#E2E2E2', rim='#898989', symbol='#454545')
+    p = palette
+    background = '' if tinted else '''
+  <rect width="1024" height="1024" fill="url(#background)"/>
+  <rect width="1024" height="1024" fill="url(#ambient)"/>'''
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="0.85" y2="1">
+      <stop stop-color="{p['top']}"/><stop offset="1" stop-color="{p['bottom']}"/>
+    </linearGradient>
+    <radialGradient id="ambient" cx="0.3" cy="0.15" r="0.85">
+      <stop stop-color="{p['glow']}" stop-opacity="0.28"/><stop offset="1" stop-color="{p['glow']}" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="plumage" x1="0.2" y1="0" x2="0.75" y2="1">
+      <stop stop-color="{p['gold_top']}"/><stop offset="1" stop-color="{p['gold_bottom']}"/>
+    </linearGradient>
+  </defs>{background}
+  <!-- One continuous silhouette: rounded ear tufts stay legible at home-screen size. -->
+  <path d="M 226 202 Q 224 171 250 186 L 354 244
+           Q 512 196 670 244 L 774 186 Q 800 171 798 202
+           L 786 338 Q 828 423 824 552
+           C 822 745 706 842 512 842 C 318 842 202 745 200 552
+           Q 196 423 238 338 Z" fill="url(#plumage)"/>
+  <!-- A single facial mask removes overlapping circles and extra eye rings. -->
+  <path d="M 512 378 C 452 285 310 299 278 405
+           C 247 509 306 600 402 618 Q 465 632 512 666
+           Q 559 632 622 618 C 718 600 777 509 746 405
+           C 714 299 572 285 512 378 Z" fill="{p['face']}"/>
+  <ellipse cx="397" cy="466" rx="51" ry="60" fill="{p['ink']}"/>
+  <ellipse cx="381" cy="445" rx="15" ry="18" fill="{p['face']}"/>
+  <path d="M 580 474 Q 630 421 680 474" fill="none" stroke="{p['ink']}" stroke-width="29" stroke-linecap="round"/>
+  <path d="M 485 536 Q 512 523 539 536 L 520 571 Q 512 583 504 571 Z" fill="{p['beak']}"/>
+  <!-- Coin and folded wings form one clear financial accent. -->
+  <circle cx="512" cy="716" r="100" fill="{p['rim']}"/>
+  <circle cx="512" cy="708" r="96" fill="{p['coin']}"/>
+  <circle cx="512" cy="708" r="76" fill="none" stroke="{p['rim']}" stroke-width="6"/>
+  <path d="M 538 674 C 526 659 487 660 485 682
+           C 483 707 539 701 539 727 C 539 751 498 755 482 739
+           M 512 652 L 512 763" fill="none" stroke="{p['symbol']}" stroke-width="13" stroke-linecap="round"/>
+  <path d="M 230 560 C 238 624 275 682 340 704
+           C 371 709 409 683 432 700 C 455 723 425 756 391 762
+           C 312 772 251 711 230 637 Z" fill="{p['wing']}"/>
+  <path d="M 794 560 C 786 624 749 682 684 704
+           C 653 709 615 683 592 700 C 569 723 599 756 633 762
+           C 712 772 773 711 794 637 Z" fill="{p['wing']}"/>
+</svg>
+'''
 
-    # ear tufts (behind the body)
-    left_tuft = 'M 262 318 C 236 252 238 200 250 156 C 300 190 352 228 392 258 Z'
-    right_tuft = 'M 762 318 C 788 252 786 200 774 156 C 724 190 672 228 632 258 Z'
-    add(f'<path d="{left_tuft}" fill="{body_dark}"/>')
-    add(f'<path d="{right_tuft}" fill="{body_dark}"/>')
-
-    # body: one round blob
-    add('<path d="M 512 212 C 712 212 818 352 818 548 C 818 752 690 872 512 872 C 334 872 206 752 206 548 C 206 352 312 212 512 212 Z" fill="url(#body)"/>')
-
-    # belly with feather scallops
-    add(f'<ellipse cx="512" cy="738" rx="196" ry="128" fill="{face}" opacity="0.92"/>')
-    if not p.get('coin'):
-        for row, (y, xs) in enumerate([(700, [452, 512, 572]), (752, [422, 482, 542, 602]), (802, [470, 530])]):
-            for x in xs:
-                add(f'<path d="M {x-20} {y} Q {x} {y+22} {x+20} {y}" stroke="{body_mid}" stroke-width="9" fill="none" stroke-linecap="round" opacity="0.7"/>')
-
-    # wings
-    add('<path d="M 226 500 C 182 610 214 766 336 836 C 300 730 304 616 226 500 Z" fill="url(#wing)"/>')
-    add('<path d="M 798 500 C 842 610 810 766 688 836 C 724 730 720 616 798 500 Z" fill="url(#wing)"/>')
-
-    # facial discs
-    add(f'<circle cx="400" cy="472" r="142" fill="{face}"/>')
-    add(f'<circle cx="624" cy="472" r="142" fill="{face}"/>')
-
-    # cheeks
-    if p.get('cheeks', True):
-        add('<ellipse cx="318" cy="606" rx="44" ry="26" fill="#FB7185" opacity="0.45"/>')
-        add('<ellipse cx="706" cy="606" rx="44" ry="26" fill="#FB7185" opacity="0.45"/>')
-
-    def open_eye(cx, cy, look):
-        add(f'<circle cx="{cx}" cy="{cy}" r="100" fill="#FFFFFF"/>')
-        px, py = cx + look, cy + 10
-        add(f'<circle cx="{px}" cy="{py}" r="64" fill="{ink}"/>')
-        add(f'<circle cx="{px-22}" cy="{py-24}" r="22" fill="#FFFFFF"/>')
-        add(f'<circle cx="{px+20}" cy="{py+18}" r="9" fill="#FFFFFF" opacity="0.9"/>')
-
-    def wink_eye(cx, cy):
-        add(f'<path d="M {cx-62} {cy+16} Q {cx} {cy-50} {cx+62} {cy+16}" stroke="{ink}" stroke-width="26" fill="none" stroke-linecap="round"/>')
-
-    open_eye(400, 472, 12)
-    if p.get('wink'):
-        wink_eye(624, 472)
-    else:
-        open_eye(624, 472, -12)
-
-    if p.get('glasses'):
-        g = p['glasses']
-        add(f'<circle cx="400" cy="472" r="116" stroke="{g}" stroke-width="16" fill="none"/>')
-        add(f'<circle cx="624" cy="472" r="116" stroke="{g}" stroke-width="16" fill="none"/>')
-        add(f'<path d="M 494 432 Q 512 414 530 432" stroke="{g}" stroke-width="14" fill="none" stroke-linecap="round"/>')
-
-    # beak
-    add(f'<path d="M 476 556 Q 512 536 548 556 Q 530 600 518 618 Q 512 626 506 618 Q 494 600 476 556 Z" fill="{beak}"/>')
-    add('<path d="M 492 556 Q 512 546 532 556" stroke="#FFFFFF" stroke-width="8" fill="none" stroke-linecap="round" opacity="0.45"/>')
-
-    # coin held by the wings
-    if p.get('coin'):
-        add('<circle cx="512" cy="760" r="96" fill="#CA8A04"/>')
-        add('<circle cx="512" cy="752" r="96" fill="url(#coin)"/>')
-        add('<circle cx="512" cy="752" r="72" stroke="#CA8A04" stroke-width="8" fill="none" opacity="0.7"/>')
-        add('<path d="M 546 714 C 534 698 480 696 478 726 C 476 756 548 748 548 780 C 548 810 488 810 474 790" stroke="#A16207" stroke-width="16" fill="none" stroke-linecap="round"/>')
-        add('<path d="M 512 686 L 512 818" stroke="#A16207" stroke-width="14" stroke-linecap="round"/>')
-        # wing tips wrapping the coin's edges
-        add(f'<ellipse cx="424" cy="772" rx="50" ry="30" transform="rotate(-35 424 772)" fill="{body_dark}"/>')
-        add(f'<ellipse cx="600" cy="772" rx="50" ry="30" transform="rotate(35 600 772)" fill="{body_dark}"/>')
-
-    # feet
-    for fx in (446, 578):
-        for dx in (-22, 0, 22):
-            add(f'<ellipse cx="{fx+dx}" cy="{872}" rx="15" ry="19" fill="{p.get("feet", beak)}"/>')
-
-    add('</svg>')
-    return '\n'.join(parts)
-
-CONCEPTS = {
-    # A: amber owl on the app's indigo — cheerful, high contrast, ties to the gold of the old logo
-    'A': dict(bg=('#5B5BF0', '#7C3AED'), body=('#FDE68A', '#FBBF24', '#F59E0B'), face='#FFF7E6',
-              ink='#1E1B4B', beak='#F97316', wink=True),
-    # B: bookkeeper owl with glasses and a coin, indigo owl on warm cream
-    'B': dict(bg=('#FFF7ED', '#FED7AA'), body=('#A5B4FC', '#6366F1', '#4338CA'), face='#EEF2FF',
-              ink='#1E1B4B', beak='#F59E0B', glasses='#F59E0B', coin=True, glow=0.5),
-    # D: A's amber owl on indigo, winking, holding a gold coin
-    'D': dict(bg=('#5B5BF0', '#7C3AED'), body=('#FDE68A', '#FBBF24', '#F59E0B'), face='#FFF7E6',
-              ink='#1E1B4B', beak='#F97316', wink=True, coin=True),
-    # C: night owl — gold owl on deep navy with stars, closest to the old logo
-    'C': dict(bg=('#312E81', '#0F172A'), body=('#FDE68A', '#F59E0B', '#B45309'), face='#FFF3D6',
-              ink='#1E1B4B', beak='#EA580C', wink=False, cheeks=True, glow=0.12,
-              stars=[(150, 170, 9), (870, 140, 7), (930, 330, 5), (110, 420, 6), (820, 250, 4)]),
-}
 
 if __name__ == '__main__':
-    out = sys.argv[1]
-    for key, params in CONCEPTS.items():
-        open(f'{out}/owl_{key}.svg', 'w').write(owl(params))
+    out = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).parent
+    out.mkdir(parents=True, exist_ok=True)
+    for appearance, filename in [('light', 'AppIcon.svg'), ('dark', 'AppIcon-Dark.svg'),
+                                 ('tinted', 'AppIcon-Tinted.svg')]:
+        (out / filename).write_text(owl(appearance))

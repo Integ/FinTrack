@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="0.85" y2="1">
+      <stop stop-color="#7770F5"/><stop offset="1" stop-color="#4934B4"/>
+    </linearGradient>
+    <radialGradient id="ambient" cx="0.3" cy="0.15" r="0.85">
+      <stop stop-color="#B4ACFF" stop-opacity="0.28"/><stop offset="1" stop-color="#B4ACFF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="plumage" x1="0.2" y1="0" x2="0.75" y2="1">
+      <stop stop-color="#F2F2F2"/><stop offset="1" stop-color="#C9C9C9"/>
+    </linearGradient>
+  </defs>
+  <!-- One continuous silhouette: rounded ear tufts stay legible at home-screen size. -->
+  <path d="M 226 202 Q 224 171 250 186 L 354 244
+           Q 512 196 670 244 L 774 186 Q 800 171 798 202
+           L 786 338 Q 828 423 824 552
+           C 822 745 706 842 512 842 C 318 842 202 745 200 552
+           Q 196 423 238 338 Z" fill="url(#plumage)"/>
+  <!-- A single facial mask removes overlapping circles and extra eye rings. -->
+  <path d="M 512 378 C 452 285 310 299 278 405
+           C 247 509 306 600 402 618 Q 465 632 512 666
+           Q 559 632 622 618 C 718 600 777 509 746 405
+           C 714 299 572 285 512 378 Z" fill="#FFFFFF"/>
+  <ellipse cx="397" cy="466" rx="51" ry="60" fill="#292929"/>
+  <ellipse cx="381" cy="445" rx="15" ry="18" fill="#FFFFFF"/>
+  <path d="M 580 474 Q 630 421 680 474" fill="none" stroke="#292929" stroke-width="29" stroke-linecap="round"/>
+  <path d="M 485 536 Q 512 523 539 536 L 520 571 Q 512 583 504 571 Z" fill="#8A8A8A"/>
+  <!-- Coin and folded wings form one clear financial accent. -->
+  <circle cx="512" cy="716" r="100" fill="#898989"/>
+  <circle cx="512" cy="708" r="96" fill="#E2E2E2"/>
+  <circle cx="512" cy="708" r="76" fill="none" stroke="#898989" stroke-width="6"/>
+  <path d="M 538 674 C 526 659 487 660 485 682
+           C 483 707 539 701 539 727 C 539 751 498 755 482 739
+           M 512 652 L 512 763" fill="none" stroke="#454545" stroke-width="13" stroke-linecap="round"/>
+  <path d="M 230 560 C 238 624 275 682 340 704
+           C 371 709 409 683 432 700 C 455 723 425 756 391 762
+           C 312 772 251 711 230 637 Z" fill="#999999"/>
+  <path d="M 794 560 C 786 624 749 682 684 704
+           C 653 709 615 683 592 700 C 569 723 599 756 633 762
+           C 712 772 773 711 794 637 Z" fill="#999999"/>
+</svg>
